@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>404 - ERROR DE PERÍMETRO</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-darkest: #0d0721;
+            --danger: #ff4b4b;
+            --accent-1-light: #b5de21;
+            --text-primary: #e5e4e7;
+        }
+
+        body {
+            background-color: var(--bg-darkest);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* Efecto de parpadeo de alerta */
+        .glitch-container {
+            position: relative;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            51% { opacity: 1; }
+            100% { opacity: 1; }
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: bold;
+            color: var(--danger);
+            margin: 0;
+            text-shadow: 0 0 20px rgba(255, 75, 75, 0.5);
+        }
+
+        .warning-text {
+            border: 2px solid var(--danger);
+            padding: 20px;
+            margin-top: 20px;
+            max-width: 500px;
+            background: rgba(255, 75, 75, 0.05);
+        }
+
+        h2 { color: var(--danger); text-transform: uppercase; }
+
+        p { color: var(--text-primary); line-height: 1.6; }
+
+        .back-btn {
+            margin-top: 40px;
+            background: transparent;
+            border: 1px solid var(--accent-1-light);
+            color: var(--accent-1-light);
+            padding: 15px 30px;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            background: var(--accent-1-light);
+            color: var(--bg-darkest);
+            box-shadow: 0 0 15px var(--accent-1-light);
+        }
+
+        .footer-log {
+            position: absolute;
+            bottom: 20px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.2);
+            width: 100%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="glitch-container">
+        <p style="margin-bottom: -40px; letter-spacing: 5px; color: var(--danger);">[!] WARNING [!]</p>
+        <h1 class="error-code">404</h1>
+    </div>
+
+    <div class="warning-text">
+        <h2>Perímetro Comprometido</h2>
+        <p>
+            Has intentado acceder a un sector inexistente o de acceso restringido.<br>
+            Tu IP ha sido registrada por el sistema de seguridad de <strong>CDOUS</strong>.
+        </p>
+    </div>
+
+    <p style="margin-top: 30px; font-size: 14px;">Por favor, regresa a una zona segura antes de que se inicie el protocolo de expulsión.</p>
+
+    <a href="index.html" class="back-btn">VOLVER AL ÁREA SEGURA</a>
+
+    <div class="footer-log">
+        LOG_EVENT_ID: ERROR_NOT_FOUND // TRACE_BACK: COMPLETED // STATUS: ALERT_LEVEL_1
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Blue Moon HQ - Enlaces de Enlace</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Dancing+Script:wght@700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-hq: #0d0721;
+            --bg-leader: #130934;
+            --accent-hq: #4a21de;
+            --accent-leader: #b5de21;
+            --text-primary: #e5e4e7;
+            --text-muted: #96949e;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+
+        .split-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* --- ESTILO COMÚN PARA COLUMNAS --- */
+        .column {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            transition: 0.5s;
+            position: relative;
+        }
+
+        .column h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .links-container {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* --- LADO IZQUIERDO: BLUE MOON HQ --- */
+        .hq-side {
+            background-color: var(--bg-hq);
+            border-right: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .hq-side h2 {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+        }
+
+        .btn-hq {
+            background: #180b47;
+            border: 1px solid var(--accent-hq);
+            color: var(--text-primary);
+            padding: 18px;
+            text-decoration: none;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+            font-size: 14px;
+            letter-spacing: 2px;
+            transition: 0.3s;
+        }
+
+        .btn-hq:hover {
+            background: var(--accent-hq);
+            box-shadow: 0 0 20px rgba(74, 33, 222, 0.4);
+        }
+
+        /* --- LADO DERECHO: COMANDANTE --- */
+        .leader-side {
+            background-color: var(--bg-leader);
+        }
+
+        .leader-side h2 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--accent-leader);
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--bg-hq);
+            margin-bottom: 20px;
+            border: 2px solid var(--accent-leader);
+            overflow: hidden;
+        }
+
+        .btn-leader {
+            background: transparent;
+            border: 2px solid var(--accent-leader);
+            color: var(--accent-leader);
+            padding: 15px;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 50px;
+            transition: 0.3s;
+        }
+
+        .btn-leader:hover {
+            background: var(--accent-leader);
+            color: var(--bg-hq);
+            box-shadow: 0 0 20px rgba(181, 222, 33, 0.4);
+        }
+
+        /* --- SEPARADOR CENTRAL --- */
+        .divider {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            background: var(--bg-hq);
+            border: 1px solid var(--accent-leader);
+            padding: 10px;
+            color: var(--accent-leader);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="split-container">
+        <div class="divider">VS</div>
+
+        <div class="column hq-side">
+            <h2>Blue Moon HQ</h2>
+            <div class="links-container">
+                <a href="#" class="btn-hq">TWITTER OPERACIONAL</a>
+                <a href="#" class="btn-hq">INSTAGRAM DE BASE</a>
+                <a href="#" class="btn-hq">REPORTAR ANOMALÍA</a>
+                <a href="#" class="btn-hq">TIENDA DE SUMINISTROS</a>
+            </div>
+        </div>
+
+        <div class="column leader-side">
+            <div class="profile-img">
+                <img src="https://via.placeholder.com/120/130934/b5de21?text=CMD" alt="Comandante" style="width:100%">
+            </div>
+            <h2>Nuestra Comandante</h2>
+            <div class="links-container">
+                <a href="#" class="btn-leader">Portafolio de Arte</a>
+                <a href="#" class="btn-leader">Canal de Transmisión</a>
+                <a href="#" class="btn-leader">Lista de Deseos (Kofi)</a>
+                <a href="#" class="btn-leader">Twitter Personal</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

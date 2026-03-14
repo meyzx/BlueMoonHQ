@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Moon HQ - Terminal de Acceso</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Dancing+Script:wght@700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-darkest: #0d0721;
+            --bg-dark: #130934;
+            --bg-card: #180b47;
+            --primary-dark: #25116f;
+            --primary: #09041b;
+            --primary-light: #4a21de;
+            --accent-1-dark: #7f9b17;
+            --accent-1: #161b04;
+            --accent-1-light: #b5de21;
+            --text-muted: #96949e;
+            --text-secondary: #bdbcc2;
+            --text-primary: #e5e4e7;
+        }
+
+        body {
+            background-color: var(--bg-darkest);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* Scanline Effect */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        header {
+            background-color: rgba(13, 7, 33, 0.95);
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--primary-dark);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Dancing Script', cursive;
+            font-size: 24px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            margin: 0 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--accent-1-light);
+        }
+
+        .exclusive {
+            color: var(--accent-1-light);
+            border: 1px solid var(--accent-1-light);
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+
+        /* Hero Slider Placeholder */
+        .hero {
+            height: 500px;
+            background: linear-gradient(to bottom, transparent, var(--bg-darkest)), 
+                        url('https://via.placeholder.com/1440x600/130934/b5de21?text=SISTEMA+OPERATIVO+ACTIVO');
+            background-size: cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-family: 'Inter', sans-serif;
+            font-size: 64px;
+            letter-spacing: -2px;
+            margin: 0;
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 10%;
+        }
+
+        h2 {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent-1-light);
+            text-transform: uppercase;
+            border-bottom: 2px solid var(--primary-light);
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        .mission-text {
+            font-size: 18px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            max-width: 800px;
+        }
+
+        /* Cards Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--primary-dark);
+            display: flex;
+            padding: 20px;
+            gap: 20px;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            border-color: var(--accent-1-light);
+            box-shadow: 0 0 15px rgba(181, 222, 33, 0.2);
+        }
+
+        .card img {
+            width: 100px;
+            height: 100px;
+            background-color: var(--primary-dark);
+            object-fit: cover;
+        }
+
+        .card-info h3 {
+            margin: 0;
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-info p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .censored {
+            background-color: #000;
+            color: #000;
+            padding: 0 5px;
+        }
+
+        footer {
+            background-color: var(--primary);
+            padding: 50px;
+            display: flex;
+            justify-content: space-between;
+            border-top: 1px solid var(--primary-dark);
+            font-size: 12px;
+        }
+
+        .footer-brand {
+            font-family: 'Dancing Script', cursive;
+            font-size: 20px;
+            color: var(--accent-1-light);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.location.href='index.html'">Blue Moon HQ</div>
+        <nav>
+            <a href="index.html" class="active">Sobre Nosotros</a>
+            <a href="noticias.html">Noticias</a>
+            <a href="historia.html">Historia</a>
+            <a href="tienda.html">Tienda</a>
+            <a href="exclusivo.html" class="exclusive">🔒 Exclusivo</a>
+            <a href="comunidad.html">Comunidad</a>
+            <a href="contacto.html">Contacto</a>
+        </nav>
+        <div class="user-icon">👤</div>
+    </header>
+
+    <div class="hero">
+        <h1>Blue Moon HQ</h1>
+        <p style="font-family: 'JetBrains Mono';">PROTOCOL 4.0 // ACCESS GRANTED</p>
+    </div>
+
+    <section id="cuartel">
+        <h2>Cuartel</h2>
+        <h3>Acerca de nosotros</h3>
+        <p class="mission-text">
+            Blue Moon Headquarters es un bastión de seguridad dedicado a la identificación, asilo y protección de entidades transdimensionales en riesgo. Operamos bajo un estricto protocolo de confidencialidad, manteniendo un perfil invisible para la sociedad civil.
+        </p>
+        
+        <h3>Misión</h3>
+        <p class="mission-text">
+            Nuestra prioridad es salvaguardar a seres de intelecto superior cuya existencia es amenazada por comandos externos, garantizando su autopreservación a través de nuestras divisiones especializadas.
+        </p>
+    </section>
+
+    <section id="corporativo">
+        <h2>Departamento Corporativo</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Skye">
+                <div class="card-info">
+                    <h3>Skye</h3>
+                    <p><strong>Mensajería y Paquetería</strong><br>La más rápida del cuartel. Los mensajes siempre llegan a tiempo, siempre a la moda.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Silas">
+                <div class="card-info">
+                    <h3>Silas</h3>
+                    <p><strong>Administrativo</strong><br>Secretario encargado. Amante del té y de la moda. Un aire fresco bajo ojos cansados.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="seguridad">
+        <h2>Departamento de Seguridad</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="CDOUS">
+                <div class="card-info">
+                    <h3>CDOUS</h3>
+                    <p><strong>Primera Defensa (Comandante)</strong><br>Sentido del deber inquebrantable. Cálido pero letal en defensa de los suyos.</p>
+                </div>
+            </div>
+            </div>
+    </section>
+
+    <section id="no-oficiales">
+        <h2>Miembros No Oficiales</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Felithx">
+                <div class="card-info">
+                    <h3>Felithx</h3>
+                    <p>Investigador y <span class="censored">CENSURADO</span>. Tener especial cuidado.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div>
+            <div class="footer-brand">Blue Moon Staff</div>
+            <p>Redes Comandante</p>
+            <p>Iconos: TW | IG | DS</p>
+        </div>
+        <div>
+            <p><strong>Contacto:</strong> contacto@bluemoonhq.com</p>
+            <p><strong>Soporte:</strong> soporte@bluemoonhq.com</p>
+            <p style="margin-top: 20px; opacity: 0.5;">© 2026 Blue Moon HQ. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
