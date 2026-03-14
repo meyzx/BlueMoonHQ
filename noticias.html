@@ -1,5 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
+<header>
+    <div class="logo" onclick="window.location.href='index.html'">Blue Moon HQ</div>
+    <nav>
+        <a href="index.html">Sobre Nosotros</a>
+        <a href="noticias.html">Noticias</a>
+        <a href="historia.html">Historia</a>
+        <a href="tienda.html">Tienda</a>
+        <a href="exclusivo.html" class="exclusive">🔒 Exclusivo</a>
+        <a href="comunidad.html">Comunidad</a>
+        <a href="contacto.html">Contacto</a>
+    </nav>
+    <div class="user-icon">👤</div>
+</header>
 <head>
     <meta charset="UTF-8">
     <title>Blue Moon HQ - Boletín de Operaciones</title>
@@ -174,6 +187,46 @@
         <a href="#" class="link-btn">ACCEDER AL ARCHIVO →</a>
     </div>
 </section>
+<footer>
+    <div class="footer-content">
+        <div class="footer-section">
+            <h4>BLUE MOON HQ</h4>
+            <p>Sistema de gestión de activos y red de inteligencia de la Comandante.</p>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 Operación Blue Moon - Todos los archivos están encriptados</span>
+            <div class="footer-links">
+                <a href="contacto.html">Soporte Táctico</a> | 
+                <a href="#">Privacidad de Datos</a>
+            </div>
+        </div>
+    </div>
+</footer>
 
+<style>
+    /* Estilos para el Footer (Agrégalos a tu bloque <style>) */
+    footer {
+        background: #090516;
+        border-top: 1px solid #180b47;
+        padding: 40px 10% 20px;
+        margin-top: 50px;
+        color: #96949e;
+        font-family: 'JetBrains Mono', monospace;
+    }
+    .footer-content { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+    .footer-section h4 { color: #b5de21; margin-bottom: 15px; }
+    .footer-section p { font-size: 13px; max-width: 300px; }
+    .footer-bottom { 
+        width: 100%; 
+        border-top: 1px solid rgba(255,255,255,0.05); 
+        margin-top: 30px; 
+        padding-top: 20px; 
+        display: flex; 
+        justify-content: space-between; 
+        font-size: 11px; 
+    }
+    .footer-links a { color: #96949e; text-decoration: none; }
+    .footer-links a:hover { color: #b5de21; }
+</style>
 </body>
 </html>
