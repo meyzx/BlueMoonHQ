@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Blue Moon HQ - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-darkest: #0d0721; --bg-card: #180b47;
+            --primary-light: #4a21de; --accent-1-light: #b5de21;
+            --text-primary: #e5e4e7; --text-muted: #96949e;
+        }
+        body { 
+            background-color: var(--bg-darkest); 
+            color: var(--text-primary); 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; 
+            display: flex; justify-content: center; align-items: center;
+            height: 100vh; overflow: hidden;
+        }
+
+        /* EFECTO DE ESCANEO DE FONDO */
+        .scanline {
+            width: 100%; height: 100px;
+            background: linear-gradient(0deg, rgba(181, 222, 33, 0) 0%, rgba(181, 222, 33, 0.05) 50%, rgba(181, 222, 33, 0) 100%);
+            position: absolute; top: -100px; left: 0;
+            animation: scan 4s linear infinite;
+            z-index: 1; pointer-events: none;
+        }
+        @keyframes scan { 0% { top: -100px; } 100% { top: 100vh; } }
+
+        .login-box {
+            width: 100%; max-width: 400px;
+            background: var(--bg-card);
+            padding: 50px 40px;
+            border: 1px solid var(--primary-light);
+            position: relative; z-index: 10;
+            text-align: center;
+        }
+
+        .login-header h2 { font-family: 'JetBrains Mono'; color: var(--accent-1-light); margin-bottom: 5px; letter-spacing: 2px; }
+        .login-header p { font-size: 11px; color: var(--text-muted); margin-bottom: 30px; text-transform: uppercase; }
+
+        .input-group { text-align: left; margin-bottom: 20px; }
+        .input-group label { display: block; font-family: 'JetBrains Mono'; font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+        
+        input {
+            width: 100%; padding: 12px; background: rgba(0,0,0,0.4);
+            border: 1px solid #2a1a5e; color: white; box-sizing: border-box;
+            font-family: 'JetBrains Mono'; transition: 0.3s;
+        }
+        input:focus { outline: none; border-color: var(--accent-1-light); box-shadow: 0 0 10px rgba(181, 222, 33, 0.1); }
+
+        .login-btn {
+            width: 100%; background: var(--accent-1-light); color: var(--bg-darkest);
+            border: none; padding: 15px; font-family: 'JetBrains Mono'; font-weight: bold;
+            cursor: pointer; margin-top: 10px; transition: 0.3s;
+        }
+        .login-btn:hover { box-shadow: 0 0 20px var(--accent-1-light); letter-spacing: 2px; }
+
+        .links { margin-top: 25px; font-size: 13px; color: var(--text-muted); }
+        .links a { color: var(--primary-light); text-decoration: none; font-weight: bold; }
+        .links a:hover { text-decoration: underline; }
+
+        /* DECORACIÓN TÁCTICA */
+        .status-light { width: 8px; height: 8px; background: var(--accent-1-light); border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 5px var(--accent-1-light); }
+    </style>
+</head>
+<body>
+
+    <div class="scanline"></div>
+
+    <div class="login-box">
+        <div class="login-header">
+            <h2>ACCESO_TERMINAL</h2>
+            <p><span class="status-light"></span> CONEXIÓN ENCRIPTADA</p>
+        </div>
+
+        <form action="index.html"> <div class="input-group">
+                <label>> AGENTE_ID / EMAIL</label>
+                <input type="text" placeholder="Alias de Agente" required>
+            </div>
+
+            <div class="input-group">
+                <label>> CLAVE_SEGURIDAD</label>
+                <input type="password" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="login-btn">AUTENTICAR</button>
+        </form>
+
+        <div class="links">
+            ¿Sin credenciales? <a href="registro.html">Solicitar Reclutamiento</a>
+        </div>
+    </div>
+
+</body>
+</html>
