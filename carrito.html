@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Blue Moon HQ - Carrito</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-darkest: #0d0721; --bg-card: #180b47;
+            --primary-light: #4a21de; --accent-1-light: #b5de21;
+            --text-primary: #e5e4e7; --text-muted: #96949e;
+            --danger: #ff4b4b;
+        }
+        body { background-color: var(--bg-darkest); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; padding-top: 100px; }
+        
+        /* HEADER REUTILIZADO */
+        header { background: rgba(13, 7, 33, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--primary-light); padding: 15px 10%; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; width: 80%; z-index: 1000; }
+        .logo { font-family: 'JetBrains Mono'; color: var(--accent-1-light); cursor: pointer; }
+        nav a { color: #bdbcc2; text-decoration: none; margin-left: 20px; font-family: 'JetBrains Mono'; font-size: 14px; }
+        
+        /* DISEÑO DEL CARRITO */
+        .cart-container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        
+        .cart-items { background: var(--bg-card); padding: 30px; border: 1px solid #2a1a5e; }
+        .cart-items h2 { font-family: 'JetBrains Mono'; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-top: 0; }
+        
+        .item { display: flex; align-items: center; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .item-img { width: 80px; height: 80px; background: #000; border: 1px solid var(--primary-light); margin-right: 20px; }
+        .item-info { flex: 1; }
+        .item-info h4 { margin: 0; font-family: 'JetBrains Mono'; }
+        .item-info p { font-size: 12px; color: var(--text-muted); margin: 5px 0 0; }
+        
+        .item-price { font-family: 'JetBrains Mono'; color: var(--accent-1-light); font-weight: bold; }
+        .remove-btn { background: transparent; border: none; color: var(--danger); cursor: pointer; font-size: 18px; margin-left: 20px; }
+
+        /* RESUMEN DE COMPRA */
+        .cart-summary { background: #130934; padding: 30px; border: 1px solid var(--primary-light); height: fit-content; }
+        .cart-summary h3 { font-family: 'JetBrains Mono'; margin-top: 0; color: var(--accent-1-light); }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 14px; }
+        .total-row { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; font-weight: bold; font-size: 18px; color: var(--accent-1-light); }
+        
+        .checkout-btn { width: 100%; background: var(--accent-1-light); color: var(--bg-darkest); border: none; padding: 15px; font-family: 'JetBrains Mono'; font-weight: bold; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+        .checkout-btn:hover { box-shadow: 0 0 15px var(--accent-1-light); transform: scale(1.02); }
+
+        footer { text-align: center; padding: 40px; color: var(--text-muted); font-size: 12px; font-family: 'JetBrains Mono'; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo" onclick="window.location.href='index.html'">Blue Moon HQ</div>
+    <nav>
+        <a href="index.html">Sobre Nosotros</a>
+        <a href="noticias.html">Noticias</a>
+        <a href="historia.html">Historia</a>
+        <a href="tienda.html">Tienda</a>
+        <a href="exclusivo.html">🔒 Exclusivo</a>
+        <a href="comunidad.html">Comunidad</a>
+    </nav>
+</header>
+
+<div class="cart-container">
+    <div class="cart-items">
+        <h2>MANIFIESTO DE CARGA</h2>
+        
+        <div class="item">
+            <div class="item-img"></div>
+            <div class="item-info">
+                <h4>Pack Stickers Holográficos</h4>
+                <p>ID: BM-STK-01</p>
+            </div>
+            <div class="item-price">$12.00</div>
+            <button class="remove-btn">×</button>
+        </div>
+
+        <div class="item">
+            <div class="item-img"></div>
+            <div class="item-info">
+                <h4>Parche Bordado Cuartel</h4>
+                <p>ID: BM-PRCH-02</p>
+            </div>
+            <div class="item-price">$8.50</div>
+            <button class="remove-btn">×</button>
+        </div>
+    </div>
+
+    <div class="cart-summary">
+        <h3>RESUMEN DE ORDEN</h3>
+        <div class="summary-row">
+            <span>Subtotal</span>
+            <span>$20.50</span>
+        </div>
+        <div class="summary-row">
+            <span>Envío Táctico</span>
+            <span>$5.00</span>
+        </div>
+        <div class="total-row summary-row">
+            <span>TOTAL</span>
+            <span>$25.50</span>
+        </div>
+        
+        <button class="checkout-btn">AUTORIZAR TRANSACCIÓN</button>
+        <p style="font-size: 10px; color: var(--text-muted); margin-top: 15px; text-align: center;">
+            [!] Al autorizar, aceptas los términos de despliegue y logística del Cuartel.
+        </p>
+    </div>
+</div>
+
+<footer>© 2026 Registro de Logística - Blue Moon HQ</footer>
+
+</body>
+</html>
