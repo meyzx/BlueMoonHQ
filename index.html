@@ -390,6 +390,91 @@
             <p style="margin-top: 20px; opacity: 0.5;">© 2026 Blue Moon HQ. Todos los derechos reservados.</p>
         </div>
     </footer>
+<div id="missionPopup" class="popup-overlay">
+    <div class="popup-content">
+        <div class="terminal-header">
+            <span class="status-dot"></span>
+            <span class="terminal-title">MENSAJE ENTRANTE DE CDOUS</span>
+        </div>
+        <div class="popup-body">
+            <h2 class="glitch-text">MISIÓN: LUNA AZUL</h2>
+            <p>> Detectada anomalía en el Sector GA-01.</p>
+            <p>> Se requiere presencia de Agentes Nivel 1 en la terminal de noticias.</p>
+            <div class="timer">AUTO-DESTRUCCIÓN EN: <span id="countdown">10</span>s</div>
+            <button class="accept-btn" onclick="closeMissionPopup()">ACEPTAR MISIÓN</button>
+        </div>
+    </div>
+</div>
 
+<style>
+    /* ESTILOS DEL POP-UP */
+    .popup-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(13, 7, 33, 0.9);
+        display: none; justify-content: center; align-items: center;
+        z-index: 9999; backdrop-filter: blur(8px);
+    }
+
+    .popup-content {
+        background: #180b47;
+        border: 1px solid #b5de21;
+        width: 90%; max-width: 450px;
+        position: relative;
+        box-shadow: 0 0 50px rgba(181, 222, 33, 0.2);
+    }
+
+    .terminal-header {
+        background: #b5de21; color: #0d0721;
+        padding: 5px 15px; font-family: 'JetBrains Mono';
+        font-size: 11px; font-weight: bold;
+        display: flex; align-items: center; gap: 10px;
+    }
+
+    .status-dot { width: 8px; height: 8px; background: #0d0721; border-radius: 50%; animation: blink 1s infinite; }
+
+    .popup-body { padding: 30px; text-align: center; color: white; font-family: 'JetBrains Mono'; }
+
+    .glitch-text { color: #b5de21; font-size: 24px; margin-bottom: 20px; text-shadow: 2px 2px #4a21de; }
+
+    .timer { font-size: 12px; color: #ff4b4b; margin: 20px 0; border: 1px dashed #ff4b4b; padding: 5px; }
+
+    .accept-btn {
+        background: transparent; border: 1px solid #b5de21; color: #b5de21;
+        padding: 12px 25px; cursor: pointer; font-family: 'JetBrains Mono';
+        transition: 0.3s; width: 100%;
+    }
+
+    .accept-btn:hover { background: #b5de21; color: #0d0721; font-weight: bold; }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+</style>
+
+<script>
+    // Lógica para mostrar el Pop-up solo una vez
+    window.onload = function() {
+        if (!sessionStorage.getItem('missionViewed')) {
+            document.getElementById('missionPopup').style.display = 'flex';
+            startCountdown();
+        }
+    };
+
+    function startCountdown() {
+        let count = 10;
+        const timerElement = document.getElementById('countdown');
+        const interval = setInterval(() => {
+            count--;
+            timerElement.innerText = count;
+            if (count <= 0) {
+                clearInterval(interval);
+                closeMissionPopup();
+            }
+        }, 1000);
+    }
+
+    function closeMissionPopup() {
+        document.getElementById('missionPopup').style.display = 'none';
+        sessionStorage.setItem('missionViewed', 'true');
+    }
+</script>
 </body>
 </html>
