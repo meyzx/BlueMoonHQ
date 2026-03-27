@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <title>Blue Moon HQ - Reclutamiento</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    
+    <script src="firebase-config.js"></script>
+
     <style>
         :root {
             --bg-darkest: #0d0721; --bg-card: #180b47;
@@ -23,7 +30,7 @@
             overflow-x: hidden;
         }
 
-        /* FONDO DE ESCANEO (Efecto decorativo) */
+        /* FONDO DE ESCANEO */
         body::before {
             content: "";
             position: absolute;
@@ -69,8 +76,6 @@
             background: rgba(181, 222, 33, 0.05);
         }
 
-        .specialty-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-
         .submit-btn {
             width: 100%;
             background: transparent;
@@ -93,7 +98,6 @@
         .footer-note { text-align: center; margin-top: 20px; font-size: 11px; color: var(--text-muted); }
         .footer-note a { color: var(--primary-light); text-decoration: none; }
         
-        /* Decoración de esquinas */
         .corner { position: absolute; width: 10px; height: 10px; border: 2px solid var(--accent-1-light); }
         .top-l { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
         .top-r { top: -2px; right: -2px; border-left: 0; border-bottom: 0; }
@@ -110,25 +114,25 @@
         <p>Protocolo de Inicio de Sesión</p>
     </div>
 
-    <form action="#">
+    <form id="registroForm">
         <div class="form-group">
             <label>> NOMBRE DE AGENTE (ALIAS)</label>
-            <input type="text" placeholder="Ej: Skye_01" required>
+            <input type="text" id="regAlias" placeholder="Ej: Skye_01" required>
         </div>
 
         <div class="form-group">
             <label>> CORREO DE ENLACE</label>
-            <input type="email" placeholder="agente@inteligencia.com" required>
+            <input type="email" id="regEmail" placeholder="agente@inteligencia.com" required>
         </div>
 
         <div class="form-group">
             <label>> CLAVE DE ACCESO</label>
-            <input type="password" placeholder="••••••••" required>
+            <input type="password" id="regPass" placeholder="••••••••" required>
         </div>
 
         <div class="form-group">
             <label>> ESPECIALIDAD DE CAMPO</label>
-            <select>
+            <select id="regEspecialidad">
                 <option>Inteligencia (Hacking)</option>
                 <option>Logística (Suministros)</option>
                 <option>Exploración (Historia)</option>
@@ -143,6 +147,46 @@
         ¿Ya tienes credenciales? <a href="login.html">Acceder a la terminal</a>
     </div>
 </div>
+
+<script>
+    const registroForm = document.getElementById('registroForm');
+
+    registroForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const email = document.getElementById('regEmail').value;
+        const pass = document.getElementById('regPass').value;
+        const alias = document.getElementById('regAlias').value;
+        const especialidad = document.getElementById('regEspecialidad').value;
+
+        // Crear usuario en Authentication
+        auth.createUserWithEmailAndPassword(email, pass)
+            .then((userCredential) => {
+                const user = userCredential.user;
+                
+                // Guardar perfil en Firestore
+                return db.collection("agentes").doc(user.uid).set({
+                    username: alias,
+                    email: email,
+                    rank: "Recluta",
+                    specialty: especialidad,
+                    hasExclusiveAccess: false,
+                    credits: 0,
+                    joinedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            })
+            .then(() => {
+                alert("AGENTE REGISTRADO: Bienvenido al Cuartel, " + alias);
+                window.location.href = 'index.html';
+            })
+            .catch((error) => {
+                let mensajeError = "Error en el sistema.";
+                if(error.code === 'auth/email-already-in-use') mensajeError = "Este correo ya está registrado.";
+                if(error.code === 'auth/weak-password') mensajeError = "La clave debe tener al menos 6 caracteres.";
+                alert("FALLO EN ALTA: " + mensajeError);
+            });
+    });
+</script>
 
 </body>
 </html>
