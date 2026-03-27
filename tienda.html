@@ -18,7 +18,7 @@
             --accent-1-light: #b5de21; --text-muted: #96949e; --text-secondary: #bdbcc2; --text-primary: #e5e4e7;
         }
 
-        body { background-color: var(--bg-darkest); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+        body { background-color: var(--bg-darkest); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
 
         /* HEADER & NAV */
         header {
@@ -26,51 +26,47 @@
             justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary-dark);
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { font-family: 'Dancing Script', cursive; font-size: 24px; cursor: pointer; color: var(--text-primary); text-decoration: none; }
+        .logo { font-family: 'Dancing Script', cursive; font-size: 24px; color: var(--text-primary); text-decoration: none; }
         nav a { color: var(--text-secondary); text-decoration: none; margin: 0 15px; font-family: 'JetBrains Mono', monospace; font-size: 14px; transition: 0.3s; }
         nav a:hover, nav a.active { color: var(--accent-1-light); }
-        .exclusive { color: var(--accent-1-light); border: 1px solid var(--accent-1-light); padding: 5px 10px; border-radius: 4px; }
 
-        .shop-header { padding: 60px 10% 20px; text-align: left; border-bottom: 1px solid var(--bg-card); }
-        .shop-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 3rem; margin: 0; }
-        .currency-display { font-family: 'JetBrains Mono'; color: var(--accent-1-light); font-size: 14px; margin-top: 10px; }
+        /* CARRITO ICON & PANEL */
+        .cart-icon-container { position: relative; cursor: pointer; margin-right: 20px; }
+        .cart-count { 
+            position: absolute; top: -8px; right: -10px; background: var(--accent-1-light); 
+            color: var(--bg-darkest); font-size: 10px; font-weight: bold; 
+            padding: 2px 6px; border-radius: 10px; font-family: 'JetBrains Mono';
+        }
 
+        .cart-sidebar {
+            position: fixed; top: 0; right: -400px; width: 350px; height: 100%;
+            background: var(--bg-card); border-left: 1px solid var(--primary-light);
+            z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 30px; box-sizing: border-box; display: flex; flex-direction: column;
+        }
+        .cart-sidebar.active { right: 0; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary-dark); padding-bottom: 15px; margin-bottom: 20px; }
+        .cart-items { flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 13px; background: rgba(0,0,0,0.2); padding: 10px; }
+        .cart-total { border-top: 1px solid var(--primary-dark); padding-top: 20px; font-family: 'JetBrains Mono'; color: var(--accent-1-light); }
+
+        /* BOTONES TIENDA */
         .shop-container { padding: 40px 10%; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
-
-        .product-card {
-            background: var(--bg-dark); border: 1px solid var(--bg-card);
-            padding: 20px; transition: 0.3s; display: flex; flex-direction: column;
-            position: relative;
-        }
-        .product-card:hover { border-color: var(--accent-1-light); transform: translateY(-5px); box-shadow: 0 5px 20px rgba(181, 222, 33, 0.1); }
-        
-        .product-tag { 
-            position: absolute; top: 10px; right: 10px; background: var(--primary-light); 
-            font-size: 10px; padding: 2px 8px; font-family: 'JetBrains Mono'; font-weight: bold; 
-        }
-
-        .product-image {
-            width: 100%; height: 250px; background: var(--bg-card);
-            margin-bottom: 20px; object-fit: cover; border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .product-info h3 { font-family: 'JetBrains Mono'; margin: 0 0 10px 0; color: white; }
-        .product-info p { font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px; }
-        
-        .product-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
-        .price { font-family: 'JetBrains Mono'; font-weight: bold; color: var(--accent-1-light); font-size: 18px; }
-
+        .product-card { background: var(--bg-dark); border: 1px solid var(--bg-card); padding: 20px; position: relative; }
         .buy-btn {
             background: transparent; border: 1px solid var(--accent-1-light); color: var(--accent-1-light);
-            padding: 8px 15px; font-family: 'JetBrains Mono'; font-size: 12px; cursor: pointer; transition: 0.3s;
+            padding: 8px 15px; font-family: 'JetBrains Mono'; cursor: pointer; width: 100%;
         }
         .buy-btn:hover { background: var(--accent-1-light); color: var(--bg-darkest); }
 
-        footer { background-color: var(--primary); padding: 50px; display: flex; justify-content: space-between; border-top: 1px solid var(--primary-dark); font-size: 12px; }
+        .checkout-btn {
+            background: var(--accent-1-light); color: var(--bg-darkest); border: none;
+            padding: 15px; font-family: 'JetBrains Mono'; font-weight: bold; width: 100%; cursor: pointer; margin-top: 20px;
+        }
 
-        .user-menu-container { position: relative; }
-        .user-panel { display: none; position: absolute; top: 50px; right: 0; width: 220px; background: var(--bg-card); border: 1px solid var(--primary-light); padding: 20px; z-index: 2000; }
-        .user-panel.active { display: block; }
+        footer { background-color: var(--primary); padding: 30px 10%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--primary-dark); margin-top: auto; }
+        .icon-svg { width: 18px; height: 18px; fill: var(--text-muted); transition: 0.3s; }
+        .icon-svg:hover { fill: var(--accent-1-light); }
     </style>
 </head>
 <body>
@@ -80,101 +76,131 @@
         <nav>
             <a href="index.html">Sobre Nosotros</a>
             <a href="noticias.html">Noticias</a>
-            <a href="historia.html">Historia</a>
             <a href="tienda.html" class="active">Tienda</a>
-            <a href="exclusivo.html" class="exclusive">🔒 Exclusivo</a>
+            <a href="comunidad.html">Comunidad</a>
             <a href="contacto.html">Contacto</a>
         </nav>
         
-        <div class="user-menu-container">
-            <div class="user-icon" style="cursor:pointer" onclick="document.getElementById('userPanel').classList.toggle('active')">👤</div>
-            <div class="user-panel" id="userPanel">
-                <span id="displayUsername" style="font-family:'JetBrains Mono'; color:var(--accent-1-light); font-weight:bold;">Invitado</span><br>
-                <small id="displayCredits" style="color:var(--text-muted)">Créditos: 0 ◈</small>
-                <hr style="border:0; border-top:1px solid var(--primary-dark); margin:10px 0;">
-                <button id="logoutBtn" style="display:none; width:100%; background:transparent; border:1px solid #ff4b4b; color:#ff4b4b; cursor:pointer; padding:5px; font-family:'JetBrains Mono'; font-size:11px;">CERRAR SESIÓN</button>
+        <div style="display: flex; align-items: center;">
+            <div class="cart-icon-container" onclick="toggleCart()">
+                🛒 <span class="cart-count" id="cartCount">0</span>
             </div>
+            <div class="user-icon" onclick="document.getElementById('userPanel').classList.toggle('active')" style="cursor:pointer">👤</div>
+        </div>
+
+        <div class="user-panel" id="userPanel" style="display:none; position:absolute; top:70px; right:50px; background:var(--bg-card); padding:20px; border:1px solid var(--primary-light); z-index:3000;">
+            <span id="displayUsername" style="color:var(--accent-1-light); font-family:'JetBrains Mono';">Invitado</span>
+            <button id="logoutBtn" style="display:none; margin-top:10px; background:red; color:white; border:none; padding:5px; width:100%;">SALIR</button>
         </div>
     </header>
 
-    <div class="shop-header">
-        <h1>Suministros del Cuartel</h1>
-        <div class="currency-display">> ESTADO DEL MERCADO: ABIERTO // MONEDA: CRÉDITOS AZULES (◈)</div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h2 style="font-family:'JetBrains Mono'; font-size:18px; margin:0;">ADQUISICIONES</h2>
+            <button onclick="toggleCart()" style="background:none; border:none; color:white; cursor:pointer;">✕</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            </div>
+        <div class="cart-total">
+            <div style="display:flex; justify-content:space-between;">
+                <span>TOTAL:</span>
+                <span id="cartTotal">0 ◈</span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">FINALIZAR ORDEN</button>
+        </div>
     </div>
 
     <main class="shop-container">
-        
         <article class="product-card">
-            <div class="product-tag">EQUIPAMIENTO</div>
-            <img src="https://via.placeholder.com/300x250/130934/4a21de?text=HOODIE+OMEGA" alt="Hoodie HQ" class="product-image">
-            <div class="product-info">
-                <h3>Hoodie Protocolo 4.0</h3>
-                <p>Prenda con tecnología de camuflaje social. Algodón pesado de alta calidad con el logo del Cuartel bordado en hilo reactivo.</p>
-            </div>
-            <div class="product-footer">
-                <span class="price">450 ◈</span>
-                <button class="buy-btn">ADQUIRIR</button>
+            <img src="https://via.placeholder.com/300x250/130934/4a21de?text=HOODIE+OMEGA" class="product-image" style="width:100%">
+            <h3>Hoodie Protocolo 4.0</h3>
+            <p style="font-size:12px; color:var(--text-muted)">Equipamiento táctico de algodón pesado.</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                <span style="color:var(--accent-1-light); font-weight:bold;">450 ◈</span>
+                <button class="buy-btn" onclick="addToCart('Hoodie Protocolo 4.0', 450)">AGREGAR</button>
             </div>
         </article>
 
         <article class="product-card">
-            <div class="product-tag">DIGITAL</div>
-            <img src="https://via.placeholder.com/300x250/130934/b5de21?text=STICKER+PACK" alt="Digital Pack" class="product-image">
-            <div class="product-info">
-                <h3>Blue Moon Sticker Pack</h3>
-                <p>Colección de 20 stickers digitales para terminales y redes. Incluye variantes animadas de los agentes Skye y Silas.</p>
-            </div>
-            <div class="product-footer">
-                <span class="price">50 ◈</span>
-                <button class="buy-btn">DESCARGAR</button>
+            <img src="https://via.placeholder.com/300x250/130934/b5de21?text=STICKERS" class="product-image" style="width:100%">
+            <h3>Sticker Pack Digital</h3>
+            <p style="font-size:12px; color:var(--text-muted)">20 diseños exclusivos de Skye y Silas.</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
+                <span style="color:var(--accent-1-light); font-weight:bold;">50 ◈</span>
+                <button class="buy-btn" onclick="addToCart('Sticker Pack Digital', 50)">AGREGAR</button>
             </div>
         </article>
-
-        <article class="product-card">
-            <div class="product-tag">ACCESO</div>
-            <img src="https://via.placeholder.com/300x250/130934/4a21de?text=KEYCARD+BETA" alt="Keycard" class="product-image">
-            <div class="product-info">
-                <h3>Keycard de Acceso Beta</h3>
-                <p>Tarjeta física de colección con chip NFC. Permite desbloquear contenido especial en futuras actualizaciones del sitio.</p>
-            </div>
-            <div class="product-footer">
-                <span class="price">200 ◈</span>
-                <button class="buy-btn">ADQUIRIR</button>
-            </div>
-        </article>
-
     </main>
 
     <footer>
-        <div>
-            <div style="font-family: 'Dancing Script'; font-size: 20px; color: var(--accent-1-light);">Blue Moon Staff</div>
-            <p>Logística y Suministros por: Silas</p>
-        </div>
-        <div>
-            <p><strong>Envíos:</strong> Interdimensionales vía Skye</p>
-            <p style="margin-top: 10px; opacity: 0.5;">© 2026 Blue Moon HQ.</p>
+        <span class="footer-logo">Blue Moon Staff</span>
+        <div class="social-logos">
+            <a href="https://x.com/blue_moon_staff" target="_blank"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+            <a href="https://youtube.com/@bluemoonhq" target="_blank"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
         </div>
     </footer>
 
     <script>
-        auth.onAuthStateChanged((user) => {
-            const displayUsername = document.getElementById('displayUsername');
-            const displayCredits = document.getElementById('displayCredits');
-            const logoutBtn = document.getElementById('logoutBtn');
+        let cart = JSON.parse(localStorage.getItem('hq_cart')) || [];
 
+        function toggleCart() {
+            document.getElementById('cartSidebar').classList.toggle('active');
+        }
+
+        function addToCart(name, price) {
+            cart.push({name, price});
+            updateCart();
+        }
+
+        function updateCart() {
+            localStorage.setItem('hq_cart', JSON.stringify(cart));
+            const cartItems = document.getElementById('cartItems');
+            const cartCount = document.getElementById('cartCount');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.price;
+                cartItems.innerHTML += `
+                    <div class="cart-item">
+                        <span>${item.name}</span>
+                        <span>${item.price} ◈ <button onclick="removeItem(${index})" style="background:none; border:none; color:red; cursor:pointer;">[X]</button></span>
+                    </div>
+                `;
+            });
+
+            cartCount.innerText = cart.length;
+            cartTotal.innerText = `${total} ◈`;
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function checkout() {
+            if(cart.length === 0) return alert("Tu terminal de carga está vacía.");
+            alert("Orden enviada al Cuartel. Silas procesará tu solicitud pronto.");
+            cart = [];
+            updateCart();
+            toggleCart();
+        }
+
+        // Inicializar al cargar
+        updateCart();
+
+        // Lógica de usuario básica
+        auth.onAuthStateChanged((user) => {
             if (user) {
                 db.collection("agentes").doc(user.uid).get().then((doc) => {
                     if (doc.exists) {
-                        displayUsername.innerText = doc.data().username;
-                        displayCredits.innerText = "Créditos: " + (doc.data().credits || 0) + " ◈";
-                        logoutBtn.style.display = "block";
+                        document.getElementById('displayUsername').innerText = doc.data().username;
+                        document.getElementById('logoutBtn').style.display = "block";
                     }
                 });
             }
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            auth.signOut().then(() => { window.location.reload(); });
         });
     </script>
 </body>
