@@ -2,62 +2,180 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Blue Moon HQ - Tienda</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Moon HQ - Suministros</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Dancing+Script:wght@700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
     <style>
-        /* (Mismos estilos que index.html pero con el grid de tienda) */
-        :root { --bg-darkest: #0d0721; --bg-dark: #130934; --bg-card: #180b47; --primary-light: #4a21de; --accent-1-light: #b5de21; --text-primary: #e5e4e7; --text-secondary: #bdbcc2; --text-muted: #96949e; }
-        body { background-color: var(--bg-darkest); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; padding-top: 80px; }
+        :root {
+            --bg-darkest: #0d0721; --bg-dark: #130934; --bg-card: #180b47;
+            --primary-dark: #25116f; --primary: #09041b; --primary-light: #4a21de;
+            --accent-1-light: #b5de21; --text-muted: #96949e; --text-secondary: #bdbcc2; --text-primary: #e5e4e7;
+        }
+
+        body { background-color: var(--bg-darkest); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
+
+        /* HEADER & NAV */
+        header {
+            background-color: rgba(13, 7, 33, 0.95); padding: 20px 50px; display: flex;
+            justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary-dark);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .logo { font-family: 'Dancing Script', cursive; font-size: 24px; cursor: pointer; color: var(--text-primary); text-decoration: none; }
+        nav a { color: var(--text-secondary); text-decoration: none; margin: 0 15px; font-family: 'JetBrains Mono', monospace; font-size: 14px; transition: 0.3s; }
+        nav a:hover, nav a.active { color: var(--accent-1-light); }
+        .exclusive { color: var(--accent-1-light); border: 1px solid var(--accent-1-light); padding: 5px 10px; border-radius: 4px; }
+
+        .shop-header { padding: 60px 10% 20px; text-align: left; border-bottom: 1px solid var(--bg-card); }
+        .shop-header h1 { font-family: 'JetBrains Mono', monospace; font-size: 3rem; margin: 0; }
+        .currency-display { font-family: 'JetBrains Mono'; color: var(--accent-1-light); font-size: 14px; margin-top: 10px; }
+
+        .shop-container { padding: 40px 10%; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+
+        .product-card {
+            background: var(--bg-dark); border: 1px solid var(--bg-card);
+            padding: 20px; transition: 0.3s; display: flex; flex-direction: column;
+            position: relative;
+        }
+        .product-card:hover { border-color: var(--accent-1-light); transform: translateY(-5px); box-shadow: 0 5px 20px rgba(181, 222, 33, 0.1); }
         
-        header { background: rgba(13, 7, 33, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--primary-light); padding: 15px 10%; display: flex; justify-content: space-between; align-items: center; position: fixed; top: 0; width: 80%; z-index: 1000; }
-        .logo { font-family: 'JetBrains Mono', monospace; font-weight: bold; color: var(--accent-1-light); cursor: pointer; }
-        nav a { color: var(--text-secondary); text-decoration: none; margin-left: 20px; font-size: 14px; font-family: 'JetBrains Mono', monospace; }
-        nav a.active { color: var(--accent-1-light); }
+        .product-tag { 
+            position: absolute; top: 10px; right: 10px; background: var(--primary-light); 
+            font-size: 10px; padding: 2px 8px; font-family: 'JetBrains Mono'; font-weight: bold; 
+        }
 
-        .shop-header { padding: 60px 10% 20px; text-align: center; }
-        .shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 30px; padding: 0 10%; }
-        .product-card { background: var(--bg-card); border: 1px solid var(--bg-dark); padding: 15px; position: relative; transition: 0.3s; }
-        .product-card:hover { border-color: var(--accent-1-light); transform: translateY(-5px); }
-        .price-tag { position: absolute; top: 25px; right: 25px; background: var(--accent-1-light); color: var(--bg-darkest); padding: 5px 10px; font-family: 'JetBrains Mono', monospace; font-weight: bold; }
-        .buy-btn { width: 100%; background: transparent; border: 1px solid var(--primary-light); color: var(--text-primary); padding: 10px; font-family: 'JetBrains Mono', monospace; cursor: pointer; }
-        .buy-btn:hover { background: var(--primary-light); }
+        .product-image {
+            width: 100%; height: 250px; background: var(--bg-card);
+            margin-bottom: 20px; object-fit: cover; border: 1px solid rgba(255,255,255,0.05);
+        }
 
-        footer { background: #090516; border-top: 1px solid #180b47; padding: 40px 10% 20px; margin-top: 50px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+        .product-info h3 { font-family: 'JetBrains Mono'; margin: 0 0 10px 0; color: white; }
+        .product-info p { font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px; }
+        
+        .product-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        .price { font-family: 'JetBrains Mono'; font-weight: bold; color: var(--accent-1-light); font-size: 18px; }
+
+        .buy-btn {
+            background: transparent; border: 1px solid var(--accent-1-light); color: var(--accent-1-light);
+            padding: 8px 15px; font-family: 'JetBrains Mono'; font-size: 12px; cursor: pointer; transition: 0.3s;
+        }
+        .buy-btn:hover { background: var(--accent-1-light); color: var(--bg-darkest); }
+
+        footer { background-color: var(--primary); padding: 50px; display: flex; justify-content: space-between; border-top: 1px solid var(--primary-dark); font-size: 12px; }
+
+        .user-menu-container { position: relative; }
+        .user-panel { display: none; position: absolute; top: 50px; right: 0; width: 220px; background: var(--bg-card); border: 1px solid var(--primary-light); padding: 20px; z-index: 2000; }
+        .user-panel.active { display: block; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo" onclick="window.location.href='index.html'">Blue Moon HQ</div>
-    <nav>
-        <a href="index.html">Sobre Nosotros</a>
-        <a href="noticias.html">Noticias</a>
-        <a href="historia.html">Historia</a>
-        <a href="tienda.html" class="active">Tienda</a>
-        <a href="exclusivo.html">🔒 Exclusivo</a>
-        <a href="comunidad.html">Comunidad</a>
-        <a href="contacto.html">Contacto</a>
-    </nav>
-</header>
+    <header>
+        <a href="index.html" class="logo">Blue Moon HQ</a>
+        <nav>
+            <a href="index.html">Sobre Nosotros</a>
+            <a href="noticias.html">Noticias</a>
+            <a href="historia.html">Historia</a>
+            <a href="tienda.html" class="active">Tienda</a>
+            <a href="exclusivo.html" class="exclusive">🔒 Exclusivo</a>
+            <a href="contacto.html">Contacto</a>
+        </nav>
+        
+        <div class="user-menu-container">
+            <div class="user-icon" style="cursor:pointer" onclick="document.getElementById('userPanel').classList.toggle('active')">👤</div>
+            <div class="user-panel" id="userPanel">
+                <span id="displayUsername" style="font-family:'JetBrains Mono'; color:var(--accent-1-light); font-weight:bold;">Invitado</span><br>
+                <small id="displayCredits" style="color:var(--text-muted)">Créditos: 0 ◈</small>
+                <hr style="border:0; border-top:1px solid var(--primary-dark); margin:10px 0;">
+                <button id="logoutBtn" style="display:none; width:100%; background:transparent; border:1px solid #ff4b4b; color:#ff4b4b; cursor:pointer; padding:5px; font-family:'JetBrains Mono'; font-size:11px;">CERRAR SESIÓN</button>
+            </div>
+        </div>
+    </header>
 
-<div class="shop-header">
-    <h1 style="font-family: 'JetBrains Mono';">SUMINISTROS HQ</h1>
-    <p style="color: var(--text-muted);">EQUIPAMIENTO AUTORIZADO</p>
-</div>
-
-<div class="shop-grid">
-    <div class="product-card">
-        <div class="price-tag">$12.00</div>
-        <div style="height:200px; background:#000; margin-bottom:15px;"></div>
-        <h3>Pack Stickers</h3>
-        <p style="font-size: 13px; color: var(--text-muted);">Logos de seguridad holográficos.</p>
-        <button class="buy-btn">AÑADIR AL INVENTARIO</button>
+    <div class="shop-header">
+        <h1>Suministros del Cuartel</h1>
+        <div class="currency-display">> ESTADO DEL MERCADO: ABIERTO // MONEDA: CRÉDITOS AZULES (◈)</div>
     </div>
-</div>
 
-<footer>
-    <div style="text-align:center; font-size:11px;">© 2026 Operación Blue Moon - Suministros Despachados</div>
-</footer>
+    <main class="shop-container">
+        
+        <article class="product-card">
+            <div class="product-tag">EQUIPAMIENTO</div>
+            <img src="https://via.placeholder.com/300x250/130934/4a21de?text=HOODIE+OMEGA" alt="Hoodie HQ" class="product-image">
+            <div class="product-info">
+                <h3>Hoodie Protocolo 4.0</h3>
+                <p>Prenda con tecnología de camuflaje social. Algodón pesado de alta calidad con el logo del Cuartel bordado en hilo reactivo.</p>
+            </div>
+            <div class="product-footer">
+                <span class="price">450 ◈</span>
+                <button class="buy-btn">ADQUIRIR</button>
+            </div>
+        </article>
 
+        <article class="product-card">
+            <div class="product-tag">DIGITAL</div>
+            <img src="https://via.placeholder.com/300x250/130934/b5de21?text=STICKER+PACK" alt="Digital Pack" class="product-image">
+            <div class="product-info">
+                <h3>Blue Moon Sticker Pack</h3>
+                <p>Colección de 20 stickers digitales para terminales y redes. Incluye variantes animadas de los agentes Skye y Silas.</p>
+            </div>
+            <div class="product-footer">
+                <span class="price">50 ◈</span>
+                <button class="buy-btn">DESCARGAR</button>
+            </div>
+        </article>
+
+        <article class="product-card">
+            <div class="product-tag">ACCESO</div>
+            <img src="https://via.placeholder.com/300x250/130934/4a21de?text=KEYCARD+BETA" alt="Keycard" class="product-image">
+            <div class="product-info">
+                <h3>Keycard de Acceso Beta</h3>
+                <p>Tarjeta física de colección con chip NFC. Permite desbloquear contenido especial en futuras actualizaciones del sitio.</p>
+            </div>
+            <div class="product-footer">
+                <span class="price">200 ◈</span>
+                <button class="buy-btn">ADQUIRIR</button>
+            </div>
+        </article>
+
+    </main>
+
+    <footer>
+        <div>
+            <div style="font-family: 'Dancing Script'; font-size: 20px; color: var(--accent-1-light);">Blue Moon Staff</div>
+            <p>Logística y Suministros por: Silas</p>
+        </div>
+        <div>
+            <p><strong>Envíos:</strong> Interdimensionales vía Skye</p>
+            <p style="margin-top: 10px; opacity: 0.5;">© 2026 Blue Moon HQ.</p>
+        </div>
+    </footer>
+
+    <script>
+        auth.onAuthStateChanged((user) => {
+            const displayUsername = document.getElementById('displayUsername');
+            const displayCredits = document.getElementById('displayCredits');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            if (user) {
+                db.collection("agentes").doc(user.uid).get().then((doc) => {
+                    if (doc.exists) {
+                        displayUsername.innerText = doc.data().username;
+                        displayCredits.innerText = "Créditos: " + (doc.data().credits || 0) + " ◈";
+                        logoutBtn.style.display = "block";
+                    }
+                });
+            }
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => { window.location.reload(); });
+        });
+    </script>
 </body>
 </html>
