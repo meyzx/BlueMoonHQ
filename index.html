@@ -5,182 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blue Moon HQ - Terminal de Acceso</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Dancing+Script:wght@700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    
+    <script src="firebase-config.js"></script>
+
     <style>
+        /* [TUS ESTILOS CSS SE MANTIENEN IGUAL] */
         :root {
-            --bg-darkest: #0d0721;
-            --bg-dark: #130934;
-            --bg-card: #180b47;
-            --primary-dark: #25116f;
-            --primary: #09041b;
-            --primary-light: #4a21de;
-            --accent-1-dark: #7f9b17;
-            --accent-1: #161b04;
-            --accent-1-light: #b5de21;
-            --text-muted: #96949e;
-            --text-secondary: #bdbcc2;
-            --text-primary: #e5e4e7;
+            --bg-darkest: #0d0721; --bg-dark: #130934; --bg-card: #180b47;
+            --primary-dark: #25116f; --primary: #09041b; --primary-light: #4a21de;
+            --accent-1-dark: #7f9b17; --accent-1: #161b04; --accent-1-light: #b5de21;
+            --text-muted: #96949e; --text-secondary: #bdbcc2; --text-primary: #e5e4e7;
         }
 
-        body {
-            background-color: var(--bg-darkest);
-            color: var(--text-primary);
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            overflow-x: hidden;
-        }
+        body { background-color: var(--bg-darkest); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; }
 
         /* Scanline Effect */
         body::before {
-            content: " ";
-            display: block;
-            position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
+            content: " "; display: block; position: fixed; top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
                         linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
-            z-index: 100;
+            background-size: 100% 4px, 3px 100%; pointer-events: none; z-index: 100;
         }
 
         header {
-            background-color: rgba(13, 7, 33, 0.95);
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--primary-dark);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            background-color: rgba(13, 7, 33, 0.95); padding: 20px 50px; display: flex;
+            justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary-dark);
+            position: sticky; top: 0; z-index: 1000;
         }
 
-        .logo {
-            font-family: 'Dancing Script', cursive;
-            font-size: 24px;
-            color: var(--text-primary);
-            cursor: pointer;
-        }
+        .logo { font-family: 'Dancing Script', cursive; font-size: 24px; color: var(--text-primary); cursor: pointer; }
 
-        nav a {
-            color: var(--text-secondary);
-            text-decoration: none;
-            margin: 0 15px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            transition: 0.3s;
-        }
+        nav a { color: var(--text-secondary); text-decoration: none; margin: 0 15px; font-family: 'JetBrains Mono', monospace; font-size: 14px; transition: 0.3s; }
+        nav a:hover, nav a.active { color: var(--accent-1-light); }
+        .exclusive { color: var(--accent-1-light); border: 1px solid var(--accent-1-light); padding: 5px 10px; border-radius: 4px; }
 
-        nav a:hover, nav a.active {
-            color: var(--accent-1-light);
-        }
-
-        .exclusive {
-            color: var(--accent-1-light);
-            border: 1px solid var(--accent-1-light);
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-
-        /* Hero Slider Placeholder */
         .hero {
-            height: 500px;
-            background: linear-gradient(to bottom, transparent, var(--bg-darkest)), 
-                        url('https://via.placeholder.com/1440x600/130934/b5de21?text=SISTEMA+OPERATIVO+ACTIVO');
-            background-size: cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
+            height: 500px; background: linear-gradient(to bottom, transparent, var(--bg-darkest)), url('https://via.placeholder.com/1440x600/130934/b5de21?text=SISTEMA+OPERATIVO+ACTIVO');
+            background-size: cover; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
         }
+        .hero h1 { font-family: 'Inter', sans-serif; font-size: 64px; letter-spacing: -2px; margin: 0; }
 
-        .hero h1 {
-            font-family: 'Inter', sans-serif;
-            font-size: 64px;
-            letter-spacing: -2px;
-            margin: 0;
-        }
+        section { padding: 80px 10%; }
+        h2 { font-family: 'JetBrains Mono', monospace; color: var(--accent-1-light); text-transform: uppercase; border-bottom: 2px solid var(--primary-light); display: inline-block; margin-bottom: 30px; }
+        .mission-text { font-size: 18px; line-height: 1.8; color: var(--text-secondary); max-width: 800px; }
 
-        /* Sections */
-        section {
-            padding: 80px 10%;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .card { background-color: var(--bg-card); border: 1px solid var(--primary-dark); display: flex; padding: 20px; gap: 20px; transition: 0.3s; }
+        .card:hover { border-color: var(--accent-1-light); box-shadow: 0 0 15px rgba(181, 222, 33, 0.2); }
+        .card img { width: 100px; height: 100px; background-color: var(--primary-dark); object-fit: cover; }
+        .card-info h3 { margin: 0; color: var(--text-primary); font-family: 'JetBrains Mono', monospace; }
+        .card-info p { font-size: 14px; color: var(--text-muted); }
+        .censored { background-color: #000; color: #000; padding: 0 5px; }
 
-        h2 {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--accent-1-light);
-            text-transform: uppercase;
-            border-bottom: 2px solid var(--primary-light);
-            display: inline-block;
-            margin-bottom: 30px;
-        }
+        footer { background-color: var(--primary); padding: 50px; display: flex; justify-content: space-between; border-top: 1px solid var(--primary-dark); font-size: 12px; }
+        .footer-brand { font-family: 'Dancing Script', cursive; font-size: 20px; color: var(--accent-1-light); }
 
-        .mission-text {
-            font-size: 18px;
-            line-height: 1.8;
-            color: var(--text-secondary);
-            max-width: 800px;
+        /* PANEL DE USUARIO STYLES */
+        .user-menu-container { position: relative; }
+        .user-icon { cursor: pointer; font-size: 20px; padding: 5px; transition: 0.3s; }
+        .user-panel {
+            display: none; position: absolute; top: 50px; right: 0; width: 280px;
+            background: var(--bg-card); border: 1px solid var(--primary-light);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 2000; padding: 20px;
+            border-radius: 4px; text-align: left;
         }
+        .user-panel.active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .panel-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
+        .user-avatar img { border-radius: 50%; border: 2px solid var(--accent-1-light); width: 60px; height: 60px; }
+        .username { display: block; font-family: 'JetBrains Mono'; font-weight: bold; color: var(--accent-1-light); }
+        .rank { font-size: 11px; color: var(--text-muted); }
+        .panel-stats { background: rgba(0,0,0,0.2); padding: 10px; margin-bottom: 15px; border-radius: 4px; font-size: 12px; }
+        .panel-stats .stat { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .panel-links { display: flex; flex-direction: column; gap: 5px; }
+        .panel-links a { text-decoration: none; color: var(--text-secondary); font-size: 14px; padding: 10px; border-radius: 4px; transition: 0.2s; }
+        .panel-links a:hover { background: rgba(181, 222, 33, 0.1); color: var(--accent-1-light); }
+        .logout-btn { width: 100%; margin-top: 20px; background: transparent; border: 1px solid #ff4b4b; color: #ff4b4b; padding: 10px; cursor: pointer; font-family: 'JetBrains Mono'; font-size: 12px; }
+        .logout-btn:hover { background: #ff4b4b; color: white; }
 
-        /* Cards Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background-color: var(--bg-card);
-            border: 1px solid var(--primary-dark);
-            display: flex;
-            padding: 20px;
-            gap: 20px;
-            transition: 0.3s;
-        }
-
-        .card:hover {
-            border-color: var(--accent-1-light);
-            box-shadow: 0 0 15px rgba(181, 222, 33, 0.2);
-        }
-
-        .card img {
-            width: 100px;
-            height: 100px;
-            background-color: var(--primary-dark);
-            object-fit: cover;
-        }
-
-        .card-info h3 {
-            margin: 0;
-            color: var(--text-primary);
-            font-family: 'JetBrains Mono', monospace;
-        }
-
-        .card-info p {
-            font-size: 14px;
-            color: var(--text-muted);
-        }
-
-        .censored {
-            background-color: #000;
-            color: #000;
-            padding: 0 5px;
-        }
-
-        footer {
-            background-color: var(--primary);
-            padding: 50px;
-            display: flex;
-            justify-content: space-between;
-            border-top: 1px solid var(--primary-dark);
-            font-size: 12px;
-        }
-
-        .footer-brand {
-            font-family: 'Dancing Script', cursive;
-            font-size: 20px;
-            color: var(--accent-1-light);
-        }
+        /* POPUP STYLES */
+        .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13, 7, 33, 0.9); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(8px); }
+        .popup-content { background: #180b47; border: 1px solid #b5de21; width: 90%; max-width: 450px; position: relative; box-shadow: 0 0 50px rgba(181, 222, 33, 0.2); }
+        .terminal-header { background: #b5de21; color: #0d0721; padding: 5px 15px; font-family: 'JetBrains Mono'; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .status-dot { width: 8px; height: 8px; background: #0d0721; border-radius: 50%; animation: blink 1s infinite; }
+        .popup-body { padding: 30px; text-align: center; color: white; font-family: 'JetBrains Mono'; }
+        .glitch-text { color: #b5de21; font-size: 24px; margin-bottom: 20px; text-shadow: 2px 2px #4a21de; }
+        .timer { font-size: 12px; color: #ff4b4b; margin: 20px 0; border: 1px dashed #ff4b4b; padding: 5px; }
+        .accept-btn { background: transparent; border: 1px solid #b5de21; color: #b5de21; padding: 12px 25px; cursor: pointer; font-family: 'JetBrains Mono'; transition: 0.3s; width: 100%; }
+        .accept-btn:hover { background: #b5de21; color: #0d0721; font-weight: bold; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     </style>
 </head>
 <body>
@@ -192,126 +109,41 @@
             <a href="noticias.html">Noticias</a>
             <a href="historia.html">Historia</a>
             <a href="tienda.html">Tienda</a>
-            <a href="exclusivo.html" class="exclusive">🔒 Exclusivo</a>
+            <a href="exclusivo.html" id="linkExclusivo" class="exclusive">🔒 Exclusivo</a>
             <a href="comunidad.html">Comunidad</a>
             <a href="contacto.html">Contacto</a>
         </nav>
+        
         <div class="user-menu-container">
-    <div class="user-icon" onclick="toggleUserMenu()">👤</div>
-    
-    <div class="user-panel" id="userPanel">
-        <div class="panel-header">
-            <div class="user-avatar">
-                <img src="https://via.placeholder.com/60/b5de21/0d0721?text=AGENTE" alt="Foto Perfil">
-            </div>
-            <div class="user-info">
-                <span class="username">Recluta_042</span>
-                <span class="rank">Rango: Agente de Campo</span>
+            <div class="user-icon" onclick="toggleUserMenu()">👤</div>
+            <div class="user-panel" id="userPanel">
+                <div class="panel-header">
+                    <div class="user-avatar">
+                        <img id="userAvatarImg" src="https://via.placeholder.com/60/4a21de/ffffff?text=?" alt="Foto Perfil">
+                    </div>
+                    <div class="user-info">
+                        <span class="username" id="displayUsername">Invitado</span>
+                        <span class="rank" id="displayRank">Estado: Desconectado</span>
+                    </div>
+                </div>
+
+                <div class="panel-stats">
+                    <div class="stat"><span>Créditos:</span> <b id="displayCredits">0</b> ◈</div>
+                    <div class="stat"><span>Nivel:</span> <b id="displayLevel">1</b></div>
+                </div>
+
+                <nav class="panel-links">
+                    <a href="registro.html" id="btnRegistroPanel">📝 Registrarse</a>
+                    <a href="login.html" id="btnLoginPanel">🔑 Iniciar Sesión</a>
+                    <div id="loggedLinks" style="display: none;">
+                        <a href="carrito.html">🛒 Mi Carrito</a>
+                        <a href="membresia.html" style="color: #ffca28;">✨ Membresía Premium</a>
+                    </div>
+                </nav>
+
+                <button class="logout-btn" id="logoutBtn" style="display: none;">DESCONECTARSE</button>
             </div>
         </div>
-
-        <div class="panel-stats">
-            <div class="stat"><span>Créditos:</span> 1,250 ◈</div>
-            <div class="stat"><span>Nivel:</span> 12</div>
-        </div>
-
-        <nav class="panel-links">
-            <a href="carrito.html">🛒 Mi Carrito <span class="badge">3</span></a>
-            <a href="compras.html">📦 Mis Pedidos</a>
-            <a href="historial.html">📜 Historial de Misiones</a>
-            <a href="membresia.html" class="highlight">✨ Membresía Premium</a>
-            <a href="configuracion.html">⚙️ Ajustes de Terminal</a>
-        </nav>
-
-        <button class="logout-btn">DESCONECTARSE</button>
-    </div>
-</div>
-
-<style>
-    /* --- ESTILOS DEL PANEL DE USUARIO --- */
-    .user-menu-container { position: relative; }
-
-    .user-icon { 
-        cursor: pointer; 
-        font-size: 20px; 
-        padding: 5px; 
-        transition: 0.3s;
-    }
-
-    .user-panel {
-        display: none; /* Oculto por defecto */
-        position: absolute;
-        top: 50px;
-        right: 0;
-        width: 280px;
-        background: var(--bg-card);
-        border: 1px solid var(--primary-light);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        z-index: 2000;
-        padding: 20px;
-        border-radius: 4px;
-        text-align: left;
-    }
-
-    .user-panel.active { display: block; animation: slideIn 0.3s ease-out; }
-
-    @keyframes slideIn {
-        from { opacity: 0; transform: translateY(-10px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .panel-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
-    .user-avatar img { border-radius: 50%; border: 2px solid var(--accent-1-light); }
-    .username { display: block; font-family: 'JetBrains Mono'; font-weight: bold; color: var(--accent-1-light); }
-    .rank { font-size: 11px; color: var(--text-muted); }
-
-    .panel-stats { background: rgba(0,0,0,0.2); padding: 10px; margin-bottom: 15px; border-radius: 4px; font-size: 12px; }
-    .panel-stats .stat { display: flex; justify-content: space-between; margin-bottom: 5px; }
-    .panel-stats span { color: var(--text-muted); }
-
-    .panel-links { display: flex; flex-direction: column; gap: 5px; }
-    .panel-links a { 
-        text-decoration: none; 
-        color: var(--text-secondary); 
-        font-size: 14px; 
-        padding: 10px; 
-        border-radius: 4px; 
-        transition: 0.2s;
-    }
-    .panel-links a:hover { background: rgba(181, 222, 33, 0.1); color: var(--accent-1-light); }
-    .panel-links a.highlight { color: #ffca28; font-weight: bold; }
-    .badge { background: var(--primary-light); color: white; padding: 2px 6px; font-size: 10px; border-radius: 10px; margin-left: 10px; }
-
-    .logout-btn { 
-        width: 100%; 
-        margin-top: 20px; 
-        background: transparent; 
-        border: 1px solid #ff4b4b; 
-        color: #ff4b4b; 
-        padding: 10px; 
-        cursor: pointer; 
-        font-family: 'JetBrains Mono';
-        font-size: 12px;
-    }
-    .logout-btn:hover { background: #ff4b4b; color: white; }
-</style>
-
-<script>
-    function toggleUserMenu() {
-        const panel = document.getElementById('userPanel');
-        panel.classList.toggle('active');
-    }
-
-    // Cerrar el menú si haces clic fuera de él
-    window.onclick = function(event) {
-        if (!event.target.matches('.user-icon')) {
-            const panel = document.getElementById('userPanel');
-            if (panel.classList.contains('active')) {
-                panel.classList.remove('active');
-            }
-        }
-    }
-</script>
     </header>
 
     <div class="hero">
@@ -325,156 +157,112 @@
         <p class="mission-text">
             Blue Moon Headquarters es un bastión de seguridad dedicado a la identificación, asilo y protección de entidades transdimensionales en riesgo. Operamos bajo un estricto protocolo de confidencialidad, manteniendo un perfil invisible para la sociedad civil.
         </p>
-        
-        <h3>Misión</h3>
-        <p class="mission-text">
-            Nuestra prioridad es salvaguardar a seres de intelecto superior cuya existencia es amenazada por comandos externos, garantizando su autopreservación a través de nuestras divisiones especializadas.
-        </p>
     </section>
 
-    <section id="corporativo">
-        <h2>Departamento Corporativo</h2>
-        <div class="grid">
-            <div class="card">
-                <img src="https://via.placeholder.com/100" alt="Skye">
-                <div class="card-info">
-                    <h3>Skye</h3>
-                    <p><strong>Mensajería y Paquetería</strong><br>La más rápida del cuartel. Los mensajes siempre llegan a tiempo, siempre a la moda.</p>
-                </div>
+    <div id="missionPopup" class="popup-overlay">
+        <div class="popup-content">
+            <div class="terminal-header"><span class="status-dot"></span><span class="terminal-title">MENSAJE ENTRANTE</span></div>
+            <div class="popup-body">
+                <h2 class="glitch-text">MISIÓN: LUNA AZUL</h2>
+                <p>> Detectada anomalía en el Sector GA-01.</p>
+                <div class="timer">AUTO-DESTRUCCIÓN EN: <span id="countdown">10</span>s</div>
+                <button class="accept-btn" onclick="closeMissionPopup()">ACEPTAR MISIÓN</button>
             </div>
-            <div class="card">
-                <img src="https://via.placeholder.com/100" alt="Silas">
-                <div class="card-info">
-                    <h3>Silas</h3>
-                    <p><strong>Administrativo</strong><br>Secretario encargado. Amante del té y de la moda. Un aire fresco bajo ojos cansados.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="seguridad">
-        <h2>Departamento de Seguridad</h2>
-        <div class="grid">
-            <div class="card">
-                <img src="https://via.placeholder.com/100" alt="CDOUS">
-                <div class="card-info">
-                    <h3>CDOUS</h3>
-                    <p><strong>Primera Defensa (Comandante)</strong><br>Sentido del deber inquebrantable. Cálido pero letal en defensa de los suyos.</p>
-                </div>
-            </div>
-            </div>
-    </section>
-
-    <section id="no-oficiales">
-        <h2>Miembros No Oficiales</h2>
-        <div class="grid">
-            <div class="card">
-                <img src="https://via.placeholder.com/100" alt="Felithx">
-                <div class="card-info">
-                    <h3>Felithx</h3>
-                    <p>Investigador y <span class="censored">CENSURADO</span>. Tener especial cuidado.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <div>
-            <div class="footer-brand">Blue Moon Staff</div>
-            <p>Redes Comandante</p>
-            <p>Iconos: TW | IG | DS</p>
-        </div>
-        <div>
-            <p><strong>Contacto:</strong> contacto@bluemoonhq.com</p>
-            <p><strong>Soporte:</strong> soporte@bluemoonhq.com</p>
-            <p style="margin-top: 20px; opacity: 0.5;">© 2026 Blue Moon HQ. Todos los derechos reservados.</p>
-        </div>
-    </footer>
-<div id="missionPopup" class="popup-overlay">
-    <div class="popup-content">
-        <div class="terminal-header">
-            <span class="status-dot"></span>
-            <span class="terminal-title">MENSAJE ENTRANTE DE CDOUS</span>
-        </div>
-        <div class="popup-body">
-            <h2 class="glitch-text">MISIÓN: LUNA AZUL</h2>
-            <p>> Detectada anomalía en el Sector GA-01.</p>
-            <p>> Se requiere presencia de Agentes Nivel 1 en la terminal de noticias.</p>
-            <div class="timer">AUTO-DESTRUCCIÓN EN: <span id="countdown">10</span>s</div>
-            <button class="accept-btn" onclick="closeMissionPopup()">ACEPTAR MISIÓN</button>
         </div>
     </div>
-</div>
 
-<style>
-    /* ESTILOS DEL POP-UP */
-    .popup-overlay {
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(13, 7, 33, 0.9);
-        display: none; justify-content: center; align-items: center;
-        z-index: 9999; backdrop-filter: blur(8px);
-    }
-
-    .popup-content {
-        background: #180b47;
-        border: 1px solid #b5de21;
-        width: 90%; max-width: 450px;
-        position: relative;
-        box-shadow: 0 0 50px rgba(181, 222, 33, 0.2);
-    }
-
-    .terminal-header {
-        background: #b5de21; color: #0d0721;
-        padding: 5px 15px; font-family: 'JetBrains Mono';
-        font-size: 11px; font-weight: bold;
-        display: flex; align-items: center; gap: 10px;
-    }
-
-    .status-dot { width: 8px; height: 8px; background: #0d0721; border-radius: 50%; animation: blink 1s infinite; }
-
-    .popup-body { padding: 30px; text-align: center; color: white; font-family: 'JetBrains Mono'; }
-
-    .glitch-text { color: #b5de21; font-size: 24px; margin-bottom: 20px; text-shadow: 2px 2px #4a21de; }
-
-    .timer { font-size: 12px; color: #ff4b4b; margin: 20px 0; border: 1px dashed #ff4b4b; padding: 5px; }
-
-    .accept-btn {
-        background: transparent; border: 1px solid #b5de21; color: #b5de21;
-        padding: 12px 25px; cursor: pointer; font-family: 'JetBrains Mono';
-        transition: 0.3s; width: 100%;
-    }
-
-    .accept-btn:hover { background: #b5de21; color: #0d0721; font-weight: bold; }
-
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-</style>
-
-<script>
-    // Lógica para mostrar el Pop-up solo una vez
-    window.onload = function() {
-        if (!sessionStorage.getItem('missionViewed')) {
-            document.getElementById('missionPopup').style.display = 'flex';
-            startCountdown();
+    <script>
+        // Función para abrir/cerrar menú
+        function toggleUserMenu() {
+            document.getElementById('userPanel').classList.toggle('active');
         }
-    };
 
-    function startCountdown() {
-        let count = 10;
-        const timerElement = document.getElementById('countdown');
-        const interval = setInterval(() => {
-            count--;
-            timerElement.innerText = count;
-            if (count <= 0) {
-                clearInterval(interval);
-                closeMissionPopup();
+        // --- SISTEMA DE RECONOCIMIENTO DE AGENTE ---
+        auth.onAuthStateChanged((user) => {
+            const userPanel = document.getElementById('userPanel');
+            const displayUsername = document.getElementById('displayUsername');
+            const displayRank = document.getElementById('displayRank');
+            const displayCredits = document.getElementById('displayCredits');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const loggedLinks = document.getElementById('loggedLinks');
+            const btnLoginPanel = document.getElementById('btnLoginPanel');
+            const btnRegistroPanel = document.getElementById('btnRegistroPanel');
+            const linkExclusivo = document.getElementById('linkExclusivo');
+
+            if (user) {
+                // El usuario está conectado, buscamos sus datos en Firestore
+                db.collection("agentes").doc(user.uid).get().then((doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        displayUsername.innerText = data.username;
+                        displayRank.innerText = "Rango: " + data.rank;
+                        displayCredits.innerText = data.credits || 0;
+                        
+                        // Cambiar icono de candado si tiene acceso
+                        if(data.hasExclusiveAccess) {
+                            linkExclusivo.innerHTML = "🔓 Exclusivo";
+                        }
+                    }
+                });
+
+                // Ajustar visibilidad de botones
+                logoutBtn.style.display = "block";
+                loggedLinks.style.display = "block";
+                btnLoginPanel.style.display = "none";
+                btnRegistroPanel.style.display = "none";
+            } else {
+                // No hay usuario conectado
+                displayUsername.innerText = "Invitado";
+                displayRank.innerText = "Estado: Desconectado";
+                logoutBtn.style.display = "none";
+                loggedLinks.style.display = "none";
+                btnLoginPanel.style.display = "block";
+                btnRegistroPanel.style.display = "block";
             }
-        }, 1000);
-    }
+        });
 
-    function closeMissionPopup() {
-        document.getElementById('missionPopup').style.display = 'none';
-        sessionStorage.setItem('missionViewed', 'true');
-    }
-</script>
+        // Botón de Cerrar Sesión
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => {
+                alert("SESIÓN FINALIZADA. Volviendo a modo incógnito.");
+                window.location.reload();
+            });
+        });
+
+        // Lógica del Pop-up
+        window.onload = function() {
+            if (!sessionStorage.getItem('missionViewed')) {
+                document.getElementById('missionPopup').style.display = 'flex';
+                startCountdown();
+            }
+        };
+
+        function startCountdown() {
+            let count = 10;
+            const timerElement = document.getElementById('countdown');
+            const interval = setInterval(() => {
+                count--;
+                if(timerElement) timerElement.innerText = count;
+                if (count <= 0) {
+                    clearInterval(interval);
+                    closeMissionPopup();
+                }
+            }, 1000);
+        }
+
+        function closeMissionPopup() {
+            const popup = document.getElementById('missionPopup');
+            if(popup) popup.style.display = 'none';
+            sessionStorage.setItem('missionViewed', 'true');
+        }
+
+        // Cerrar menú al hacer clic fuera
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-icon') && !event.target.closest('.user-panel')) {
+                const panel = document.getElementById('userPanel');
+                if (panel.classList.contains('active')) panel.classList.remove('active');
+            }
+        }
+    </script>
 </body>
 </html>
