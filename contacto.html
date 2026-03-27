@@ -2,171 +2,254 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Blue Moon HQ - Enlaces de Enlace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue Moon HQ - Terminal de Enlace</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Dancing+Script:wght@700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
     <style>
         :root {
-            --bg-hq: #0d0721;
-            --bg-leader: #130934;
-            --accent-hq: #4a21de;
-            --accent-leader: #b5de21;
-            --text-primary: #e5e4e7;
-            --text-muted: #96949e;
+            --bg-darkest: #0d0721; --bg-dark: #130934; --bg-card: #180b47;
+            --primary-dark: #25116f; --primary: #09041b; --primary-light: #4a21de;
+            --accent-1-light: #b5de21; --text-muted: #96949e; --text-secondary: #bdbcc2; --text-primary: #e5e4e7;
+            --success: #b5de21;
         }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: 'Inter', sans-serif;
-            overflow: hidden;
+        body { 
+            background-color: var(--bg-darkest); color: var(--text-primary); 
+            font-family: 'Inter', sans-serif; margin: 0; min-height: 100vh; 
+            display: flex; flex-direction: column; overflow-x: hidden;
         }
 
-        .split-container {
-            display: flex;
-            height: 100vh;
-            width: 100vw;
+        /* HEADER & NAV */
+        header {
+            background-color: rgba(13, 7, 33, 0.95); padding: 20px 50px; display: flex;
+            justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary-dark);
+            position: sticky; top: 0; z-index: 1000;
         }
+        .logo { font-family: 'Dancing Script', cursive; font-size: 24px; cursor: pointer; color: var(--text-primary); text-decoration: none; }
+        nav a { color: var(--text-secondary); text-decoration: none; margin: 0 15px; font-family: 'JetBrains Mono', monospace; font-size: 14px; transition: 0.3s; }
+        nav a:hover, nav a.active { color: var(--accent-1-light); }
+        .exclusive { color: var(--accent-1-light); border: 1px solid var(--accent-1-light); padding: 5px 10px; border-radius: 4px; }
 
-        /* --- ESTILO COMÚN PARA COLUMNAS --- */
-        .column {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
-            transition: 0.5s;
-            position: relative;
+        /* PANEL USUARIO */
+        .user-menu-container { position: relative; }
+        .user-icon { cursor: pointer; font-size: 20px; padding: 5px; transition: 0.3s; color: var(--text-secondary); }
+        .user-icon:hover { color: var(--accent-1-light); }
+        .user-panel {
+            display: none; position: absolute; top: 50px; right: 0; width: 220px;
+            background: var(--bg-card); border: 1px solid var(--primary-light);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 2000; padding: 20px;
+            border-radius: 4px; text-align: left;
         }
-
-        .column h2 {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .links-container {
-            width: 100%;
-            max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        /* --- LADO IZQUIERDO: BLUE MOON HQ --- */
-        .hq-side {
-            background-color: var(--bg-hq);
-            border-right: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .hq-side h2 {
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-primary);
-        }
-
-        .btn-hq {
-            background: #180b47;
-            border: 1px solid var(--accent-hq);
-            color: var(--text-primary);
-            padding: 18px;
-            text-decoration: none;
-            font-family: 'JetBrains Mono', monospace;
-            text-align: center;
-            font-size: 14px;
-            letter-spacing: 2px;
+        .user-panel.active { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .username-display { display: block; font-family: 'JetBrains Mono'; font-weight: bold; color: var(--accent-1-light); margin-bottom: 10px; }
+        .logout-btn { 
+            width: 100%; background: transparent; border: 1px solid #ff4b4b; 
+            color: #ff4b4b; padding: 8px; cursor: pointer; font-family: 'JetBrains Mono'; font-size: 11px; 
             transition: 0.3s;
         }
+        .logout-btn:hover { background: #ff4b4b; color: white; }
 
-        .btn-hq:hover {
-            background: var(--accent-hq);
-            box-shadow: 0 0 20px rgba(74, 33, 222, 0.4);
+        /* CONTENIDO DE CONTACTO */
+        .contact-container { flex: 1; padding: 80px 10%; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        
+        .contact-info h1 { font-family: 'JetBrains Mono'; font-size: 3.5rem; margin: 0 0 20px 0; letter-spacing: -2px; }
+        .contact-info p { color: var(--text-secondary); line-height: 1.8; margin-bottom: 40px; font-size: 1.1rem; }
+        .status-box { border-left: 3px solid var(--primary-light); padding: 15px 20px; background: rgba(74, 33, 222, 0.1); font-family: 'JetBrains Mono'; font-size: 13px; }
+
+        .form-box { background: var(--bg-card); border: 1px solid var(--primary-light); padding: 40px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .form-box::before { content: "ENLACE SEGURO"; position: absolute; top: -12px; right: 20px; background: var(--bg-darkest); padding: 0 10px; color: var(--accent-1-light); font-family: 'JetBrains Mono'; font-size: 12px; font-weight: bold; }
+
+        .input-group { margin-bottom: 25px; }
+        .input-group label { display: block; font-family: 'JetBrains Mono'; font-size: 12px; color: var(--accent-1-light); margin-bottom: 10px; text-transform: uppercase; }
+        
+        input, textarea {
+            width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--primary-dark);
+            padding: 15px; color: white; font-family: 'Inter'; box-sizing: border-box; outline: none; transition: 0.3s; font-size: 14px;
         }
+        input:focus, textarea:focus { border-color: var(--accent-1-light); background: rgba(181, 222, 33, 0.05); }
 
-        /* --- LADO DERECHO: COMANDANTE --- */
-        .leader-side {
-            background-color: var(--bg-leader);
+        .send-btn {
+            width: 100%; background: var(--accent-1-light); color: var(--bg-darkest);
+            border: none; padding: 18px; font-family: 'JetBrains Mono'; font-weight: bold;
+            cursor: pointer; transition: 0.3s; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
         }
+        .send-btn:hover { box-shadow: 0 0 25px rgba(181, 222, 33, 0.5); transform: translateY(-2px); }
 
-        .leader-side h2 {
-            font-family: 'Dancing Script', cursive;
-            color: var(--accent-leader);
+        #response-msg { margin-top: 25px; font-family: 'JetBrains Mono'; font-size: 14px; text-align: center; display: none; padding: 10px; border: 1px solid transparent; }
+
+        /* FOOTER MINIMALISTA CON LOGOS */
+        footer {
+            background-color: var(--primary); padding: 30px 10%;
+            border-top: 1px solid var(--primary-dark);
+            display: flex; justify-content: space-between; align-items: center;
+            color: var(--text-muted); font-size: 12px; margin-top: auto;
         }
+        .footer-logo { font-family: 'Dancing Script'; font-size: 20px; color: var(--accent-1-light); text-decoration: none; }
+        .social-logos { display: flex; gap: 20px; align-items: center; }
+        .social-logos a { color: var(--text-muted); text-decoration: none; font-size: 18px; transition: 0.3s; display: flex; align-items: center; justify-content: center; }
+        .social-logos a:hover { color: var(--accent-1-light); transform: scale(1.1); }
+        
+        /* Iconos SVG minimalistas integrados */
+        .icon-svg { width: 20px; height: 20px; fill: currentColor; }
 
-        .profile-img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: var(--bg-hq);
-            margin-bottom: 20px;
-            border: 2px solid var(--accent-leader);
-            overflow: hidden;
+        @media (max-width: 768px) {
+            .contact-container { grid-template-columns: 1fr; padding: 40px 5%; }
+            header { padding: 20px; }
+            nav { display: none; } /* Ocultar nav en móvil para simplificar */
+            .contact-info h1 { font-size: 2.5rem; }
+            footer { flex-direction: column; gap: 20px; text-align: center; }
         }
-
-        .btn-leader {
-            background: transparent;
-            border: 2px solid var(--accent-leader);
-            color: var(--accent-leader);
-            padding: 15px;
-            text-decoration: none;
-            font-family: 'Inter', sans-serif;
-            font-weight: bold;
-            text-align: center;
-            border-radius: 50px;
-            transition: 0.3s;
-        }
-
-        .btn-leader:hover {
-            background: var(--accent-leader);
-            color: var(--bg-hq);
-            box-shadow: 0 0 20px rgba(181, 222, 33, 0.4);
-        }
-
-        /* --- SEPARADOR CENTRAL --- */
-        .divider {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            background: var(--bg-hq);
-            border: 1px solid var(--accent-leader);
-            padding: 10px;
-            color: var(--accent-leader);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-        }
-
     </style>
 </head>
 <body>
 
-    <div class="split-container">
-        <div class="divider">VS</div>
+    <header>
+        <a href="index.html" class="logo">Blue Moon HQ</a>
+        <nav>
+            <a href="index.html">Sobre Nosotros</a>
+            <a href="noticias.html">Noticias</a>
+            <a href="historia.html">Historia</a>
+            <a href="tienda.html">Tienda</a>
+            <a href="exclusivo.html" class="exclusive">🔒 Exclusivo</a>
+            <a href="contacto.html" class="active">Contacto</a>
+        </nav>
+        
+        <div class="user-menu-container">
+            <div class="user-icon" onclick="toggleUserMenu()">👤</div>
+            <div class="user-panel" id="userPanel">
+                <span id="displayUsername" class="username-display">Invitado</span>
+                <hr style="border:0; border-top:1px solid var(--primary-dark); margin:10px 0;">
+                <button id="logoutBtn" style="display:none;" class="logout-btn">DESCONECTAR</button>
+            </div>
+        </div>
+    </header>
 
-        <div class="column hq-side">
-            <h2>Blue Moon HQ</h2>
-            <div class="links-container">
-                <a href="#" class="btn-hq">TWITTER OPERACIONAL</a>
-                <a href="#" class="btn-hq">INSTAGRAM DE BASE</a>
-                <a href="#" class="btn-hq">REPORTAR ANOMALÍA</a>
-                <a href="#" class="btn-hq">TIENDA DE SUMINISTROS</a>
+    <main class="contact-container">
+        <div class="contact-info">
+            <h1>Canal de Enlace</h1>
+            <p>> ¿Deseas unirte a las filas de Blue Moon? <br>> ¿Tienes información sobre una anomalía? <br>> ¿Reportar un error en la terminal?</p>
+            
+            <div class="status-box">
+                <span style="color: var(--accent-1-light);">UBICACIÓN: [ENCRIPTADO]</span><br>
+                <span style="color: var(--text-muted);">FRECUENCIA: 144.800 MHz</span><br>
+                <span style="color: var(--success);">ESTADO: CANAL SEGURO</span>
             </div>
         </div>
 
-        <div class="column leader-side">
-            <div class="profile-img">
-                <img src="https://via.placeholder.com/120/130934/b5de21?text=CMD" alt="Comandante" style="width:100%">
-            </div>
-            <h2>Nuestra Comandante</h2>
-            <div class="links-container">
-                <a href="#" class="btn-leader">Portafolio de Arte</a>
-                <a href="#" class="btn-leader">Canal de Transmisión</a>
-                <a href="#" class="btn-leader">Lista de Deseos (Kofi)</a>
-                <a href="#" class="btn-leader">Twitter Personal</a>
-            </div>
+        <div class="form-box">
+            <form id="contactForm">
+                <div class="input-group">
+                    <label>IDENTIFICADOR (NOMBRE)</label>
+                    <input type="text" id="contactName" required placeholder="Ej. Agente X">
+                </div>
+                <div class="input-group">
+                    <label>CORREO DE ENLACE</label>
+                    <input type="email" id="contactEmail" required placeholder="tu@correo.com">
+                </div>
+                <div class="input-group">
+                    <label>TRANSMISIÓN (MENSAJE)</label>
+                    <textarea id="contactMessage" rows="6" required placeholder="Escribe tu mensaje encriptado aquí..."></textarea>
+                </div>
+                <button type="submit" class="send-btn">ENVIAR TRANSMISIÓN</button>
+            </form>
+            <div id="response-msg"></div>
+        </div>
+    </main>
+
+    <footer>
+        <a href="index.html" class="footer-logo">Blue Moon Staff</a>
+        
+        <div class="social-logos">
+            <a href="https://x.com/blue_moon_staff" target="_blank" title="Twitter X HQ">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="https://youtube.com/@bluemoonhq?si=kbQBx7Vb7Y4LMQDE" target="_blank" title="YouTube HQ">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+            <a href="https://discord.com/invite/mBYvPnE2e5" target="_blank" title="Discord HQ">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.08.08 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.372.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.076.076 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.956 2.419-2.157 2.419zm7.974 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.419 0 1.334-.946 2.419-2.157 2.419z"/></svg>
+            </a>
+            <a href="https://www.tiktok.com/@merry_zhx" target="_blank" title="TikTok Comandante">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12.525.965c.026 3.945 2.191 7.063 5.214 8.12v4.153c-1.166-.16-2.6-.487-3.814-1.286v6.2c0 4.195-3.32 7.625-7.412 7.625-4.091 0-7.413-3.32-7.413-7.412 0-4.092 3.322-7.413 7.413-7.413.494 0 .99.048 1.48.143v4.1c-.49-.147-.98-.242-1.48-.242-1.801 0-3.222 1.487-3.222 3.29 0 1.804 1.489 3.222 3.323 3.222 1.804 0 3.221-1.418 3.221-3.222v-11.85a1.41 1.41 0 0 1 1.394-1.407c.076-.002.148-.002.221-.002h2.293z"/></svg>
+            </a>
         </div>
     </div>
 
+    <script>
+        // --- MENÚ DE USUARIO DINÁMICO ---
+        function toggleUserMenu() {
+            document.getElementById('userPanel').classList.toggle('active');
+        }
+
+        // Cerrar menú si haces clic fuera
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-icon')) {
+                const panel = document.getElementById('userPanel');
+                if (panel && panel.classList.contains('active')) {
+                    panel.classList.remove('active');
+                }
+            }
+        }
+
+        // Reconocimiento de Agente
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                db.collection("agentes").doc(user.uid).get().then((doc) => {
+                    if (doc.exists) {
+                        document.getElementById('displayUsername').innerText = doc.data().username;
+                        document.getElementById('logoutBtn').style.display = "block";
+                        // Autocompletar nombre en el formulario
+                        document.getElementById('contactName').value = doc.data().username;
+                    }
+                });
+            }
+        });
+
+        // Botón Desconectar
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            auth.signOut().then(() => { window.location.reload(); });
+        });
+
+        // --- ENVÍO DE FORMULARIO A FIRESTORE ---
+        const contactForm = document.getElementById('contactForm');
+        const responseMsg = document.getElementById('response-msg');
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('contactName').value;
+            const email = document.getElementById('contactEmail').value;
+            const message = document.getElementById('contactMessage').value;
+
+            // Guardar en la colección "mensajes_contacto"
+            db.collection("mensajes_contacto").add({
+                nombre: name,
+                correo: email,
+                mensaje: message,
+                fecha_envio: firebase.firestore.FieldValue.serverTimestamp() // Fecha del servidor
+            })
+            .then(() => {
+                responseMsg.innerText = ">> TRANSMISIÓN RECIBIDA CON ÉXITO. EL CUARTEL PROCESARÁ SU MENSAJE.";
+                responseMsg.style.display = "block";
+                responseMsg.style.color = "var(--success)";
+                responseMsg.style.borderColor = "var(--success)";
+                contactForm.reset(); // Limpiar formulario
+            })
+            .catch((error) => {
+                console.error("Error al enviar:", error);
+                responseMsg.innerText = ">> FALLO EN LA TRANSMISIÓN. INTERFERENCIA DETECTADA. REINTENTE.";
+                responseMsg.style.display = "block";
+                responseMsg.style.color = "#ff4b4b";
+                responseMsg.style.borderColor = "#ff4b4b";
+            });
+        });
+    </script>
 </body>
 </html>
