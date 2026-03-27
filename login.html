@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <title>Blue Moon HQ - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore-compat.js"></script>
+    
+    <script src="firebase-config.js"></script>
+
     <style>
         :root {
             --bg-darkest: #0d0721; --bg-card: #180b47;
@@ -62,7 +69,6 @@
         .links a { color: var(--primary-light); text-decoration: none; font-weight: bold; }
         .links a:hover { text-decoration: underline; }
 
-        /* DECORACIÓN TÁCTICA */
         .status-light { width: 8px; height: 8px; background: var(--accent-1-light); border-radius: 50%; display: inline-block; margin-right: 8px; box-shadow: 0 0 5px var(--accent-1-light); }
     </style>
 </head>
@@ -76,14 +82,15 @@
             <p><span class="status-light"></span> CONEXIÓN ENCRIPTADA</p>
         </div>
 
-        <form action="index.html"> <div class="input-group">
-                <label>> AGENTE_ID / EMAIL</label>
-                <input type="text" placeholder="Alias de Agente" required>
+        <form id="loginForm"> 
+            <div class="input-group">
+                <label>> EMAIL DE AGENTE</label>
+                <input type="email" id="loginEmail" placeholder="correo@ejemplo.com" required>
             </div>
 
             <div class="input-group">
                 <label>> CLAVE_SEGURIDAD</label>
-                <input type="password" placeholder="••••••••" required>
+                <input type="password" id="loginPass" placeholder="••••••••" required>
             </div>
 
             <button type="submit" class="login-btn">AUTENTICAR</button>
@@ -93,6 +100,32 @@
             ¿Sin credenciales? <a href="registro.html">Solicitar Reclutamiento</a>
         </div>
     </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('loginEmail').value;
+            const pass = document.getElementById('loginPass').value;
+
+            // Intentar iniciar sesión en Firebase
+            auth.signInWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    alert("IDENTIDAD CONFIRMADA. Bienvenido al Cuartel, Agente.");
+                    window.location.href = 'index.html';
+                })
+                .catch((error) => {
+                    console.error(error);
+                    let mensaje = "Error de conexión.";
+                    if(error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                        mensaje = "Credenciales inválidas. Verifique sus datos.";
+                    }
+                    alert("ACCESO DENEGADO: " + mensaje);
+                });
+        });
+    </script>
 
 </body>
 </html>
