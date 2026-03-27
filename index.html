@@ -13,7 +13,6 @@
     <script src="firebase-config.js"></script>
 
     <style>
-        /* [TUS ESTILOS CSS SE MANTIENEN IGUAL] */
         :root {
             --bg-darkest: #0d0721; --bg-dark: #130934; --bg-card: #180b47;
             --primary-dark: #25116f; --primary: #09041b; --primary-light: #4a21de;
@@ -64,7 +63,7 @@
         footer { background-color: var(--primary); padding: 50px; display: flex; justify-content: space-between; border-top: 1px solid var(--primary-dark); font-size: 12px; }
         .footer-brand { font-family: 'Dancing Script', cursive; font-size: 20px; color: var(--accent-1-light); }
 
-        /* PANEL DE USUARIO STYLES */
+        /* PANEL DE USUARIO */
         .user-menu-container { position: relative; }
         .user-icon { cursor: pointer; font-size: 20px; padding: 5px; transition: 0.3s; }
         .user-panel {
@@ -87,7 +86,7 @@
         .logout-btn { width: 100%; margin-top: 20px; background: transparent; border: 1px solid #ff4b4b; color: #ff4b4b; padding: 10px; cursor: pointer; font-family: 'JetBrains Mono'; font-size: 12px; }
         .logout-btn:hover { background: #ff4b4b; color: white; }
 
-        /* POPUP STYLES */
+        /* POPUP */
         .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(13, 7, 33, 0.9); display: none; justify-content: center; align-items: center; z-index: 9999; backdrop-filter: blur(8px); }
         .popup-content { background: #180b47; border: 1px solid #b5de21; width: 90%; max-width: 450px; position: relative; box-shadow: 0 0 50px rgba(181, 222, 33, 0.2); }
         .terminal-header { background: #b5de21; color: #0d0721; padding: 5px 15px; font-family: 'JetBrains Mono'; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
@@ -157,7 +156,70 @@
         <p class="mission-text">
             Blue Moon Headquarters es un bastión de seguridad dedicado a la identificación, asilo y protección de entidades transdimensionales en riesgo. Operamos bajo un estricto protocolo de confidencialidad, manteniendo un perfil invisible para la sociedad civil.
         </p>
+        <h3>Misión</h3>
+        <p class="mission-text">
+            Nuestra prioridad es salvaguardar a seres de intelecto superior cuya existencia es amenazada por comandos externos, garantizando su autopreservación a través de nuestras divisiones especializadas.
+        </p>
     </section>
+
+    <section id="corporativo">
+        <h2>Departamento Corporativo</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Skye">
+                <div class="card-info">
+                    <h3>Skye</h3>
+                    <p><strong>Mensajería y Paquetería</strong><br>La más rápida del cuartel. Los mensajes siempre llegan a tiempo, siempre a la moda.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Silas">
+                <div class="card-info">
+                    <h3>Silas</h3>
+                    <p><strong>Administrativo</strong><br>Secretario encargado. Amante del té y de la moda. Un aire fresco bajo ojos cansados.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="seguridad">
+        <h2>Departamento de Seguridad</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="CDOUS">
+                <div class="card-info">
+                    <h3>CDOUS</h3>
+                    <p><strong>Primera Defensa (Comandante)</strong><br>Sentido del deber inquebrantable. Cálido pero letal en defensa de los suyos.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="no-oficiales">
+        <h2>Miembros No Oficiales</h2>
+        <div class="grid">
+            <div class="card">
+                <img src="https://via.placeholder.com/100" alt="Felithx">
+                <div class="card-info">
+                    <h3>Felithx</h3>
+                    <p>Investigador y <span class="censored">CENSURADO</span>. Tener especial cuidado.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div>
+            <div class="footer-brand">Blue Moon Staff</div>
+            <p>Redes Comandante</p>
+            <p>Iconos: TW | IG | DS</p>
+        </div>
+        <div>
+            <p><strong>Contacto:</strong> contacto@bluemoonhq.com</p>
+            <p><strong>Soporte:</strong> soporte@bluemoonhq.com</p>
+            <p style="margin-top: 20px; opacity: 0.5;">© 2026 Blue Moon HQ. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 
     <div id="missionPopup" class="popup-overlay">
         <div class="popup-content">
@@ -172,14 +234,10 @@
     </div>
 
     <script>
-        // Función para abrir/cerrar menú
-        function toggleUserMenu() {
-            document.getElementById('userPanel').classList.toggle('active');
-        }
+        function toggleUserMenu() { document.getElementById('userPanel').classList.toggle('active'); }
 
-        // --- SISTEMA DE RECONOCIMIENTO DE AGENTE ---
+        // RECONOCIMIENTO DE AGENTE
         auth.onAuthStateChanged((user) => {
-            const userPanel = document.getElementById('userPanel');
             const displayUsername = document.getElementById('displayUsername');
             const displayRank = document.getElementById('displayRank');
             const displayCredits = document.getElementById('displayCredits');
@@ -190,28 +248,20 @@
             const linkExclusivo = document.getElementById('linkExclusivo');
 
             if (user) {
-                // El usuario está conectado, buscamos sus datos en Firestore
                 db.collection("agentes").doc(user.uid).get().then((doc) => {
                     if (doc.exists) {
                         const data = doc.data();
                         displayUsername.innerText = data.username;
                         displayRank.innerText = "Rango: " + data.rank;
                         displayCredits.innerText = data.credits || 0;
-                        
-                        // Cambiar icono de candado si tiene acceso
-                        if(data.hasExclusiveAccess) {
-                            linkExclusivo.innerHTML = "🔓 Exclusivo";
-                        }
+                        if(data.hasExclusiveAccess) linkExclusivo.innerHTML = "🔓 Exclusivo";
                     }
                 });
-
-                // Ajustar visibilidad de botones
                 logoutBtn.style.display = "block";
                 loggedLinks.style.display = "block";
                 btnLoginPanel.style.display = "none";
                 btnRegistroPanel.style.display = "none";
             } else {
-                // No hay usuario conectado
                 displayUsername.innerText = "Invitado";
                 displayRank.innerText = "Estado: Desconectado";
                 logoutBtn.style.display = "none";
@@ -221,46 +271,31 @@
             }
         });
 
-        // Botón de Cerrar Sesión
         document.getElementById('logoutBtn').addEventListener('click', () => {
-            auth.signOut().then(() => {
-                alert("SESIÓN FINALIZADA. Volviendo a modo incógnito.");
-                window.location.reload();
-            });
+            auth.signOut().then(() => { window.location.reload(); });
         });
 
-        // Lógica del Pop-up
         window.onload = function() {
             if (!sessionStorage.getItem('missionViewed')) {
                 document.getElementById('missionPopup').style.display = 'flex';
-                startCountdown();
+                let count = 10;
+                const interval = setInterval(() => {
+                    count--;
+                    document.getElementById('countdown').innerText = count;
+                    if (count <= 0) { clearInterval(interval); closeMissionPopup(); }
+                }, 1000);
             }
         };
 
-        function startCountdown() {
-            let count = 10;
-            const timerElement = document.getElementById('countdown');
-            const interval = setInterval(() => {
-                count--;
-                if(timerElement) timerElement.innerText = count;
-                if (count <= 0) {
-                    clearInterval(interval);
-                    closeMissionPopup();
-                }
-            }, 1000);
-        }
-
         function closeMissionPopup() {
-            const popup = document.getElementById('missionPopup');
-            if(popup) popup.style.display = 'none';
+            document.getElementById('missionPopup').style.display = 'none';
             sessionStorage.setItem('missionViewed', 'true');
         }
 
-        // Cerrar menú al hacer clic fuera
         window.onclick = function(event) {
             if (!event.target.matches('.user-icon') && !event.target.closest('.user-panel')) {
                 const panel = document.getElementById('userPanel');
-                if (panel.classList.contains('active')) panel.classList.remove('active');
+                if (panel && panel.classList.contains('active')) panel.classList.remove('active');
             }
         }
     </script>
