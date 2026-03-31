@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Moon HQ - Suministros</title>
+    <title>Blue Moon HQ - Terminal de Suministros</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Dancing+Script:wght@700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
@@ -14,299 +14,307 @@
     <style>
         :root {
             --bg-darkest: #0d0721; --bg-dark: #130934; --bg-card: #180b47;
-            --primary-dark: #25116f; --primary: #09041b; --primary-light: #4a21de;
-            --accent-1-light: #b5de21; --text-muted: #96949e; --text-secondary: #bdbcc2; --text-primary: #e5e4e7;
+            --primary-light: #4a21de; --accent-1-light: #b5de21;
+            --text-muted: #96949e; --text-primary: #e5e4e7;
+            --neon-glow: 0 0 15px rgba(181, 222, 33, 0.3);
         }
 
-        body { background-color: var(--bg-darkest); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden; min-height: 100vh; display: flex; flex-direction: column; }
+        /* --- UI BASE --- */
+        body { 
+            background-color: var(--bg-darkest); color: var(--text-primary); 
+            font-family: 'Inter', sans-serif; margin: 0; overflow-x: hidden;
+            min-height: 100vh; display: flex; flex-direction: column;
+        }
 
-        /* HEADER & NAV */
+        /* EFECTO SCANLINE (Sutil) */
+        body::before {
+            content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            background-size: 100% 4px; z-index: 9999; pointer-events: none; opacity: 0.1;
+        }
+
+        /* --- HEADER --- */
         header {
-            background-color: rgba(13, 7, 33, 0.95); padding: 20px 50px; display: flex;
-            justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary-dark);
+            background: rgba(13, 7, 33, 0.9); backdrop-filter: blur(10px);
+            padding: 15px 5%; display: flex; justify-content: space-between; 
+            align-items: center; border-bottom: 1px solid var(--primary-light);
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { font-family: 'Dancing Script', cursive; font-size: 24px; color: var(--text-primary); text-decoration: none; }
-        nav a { color: var(--text-secondary); text-decoration: none; margin: 0 15px; font-family: 'JetBrains Mono', monospace; font-size: 14px; transition: 0.3s; }
-        nav a:hover, nav a.active { color: var(--accent-1-light); }
+        .logo { font-family: 'Dancing Script', cursive; font-size: 26px; text-decoration: none; color: white; }
+        nav a { 
+            color: var(--text-muted); text-decoration: none; margin: 0 15px; 
+            font-family: 'JetBrains Mono'; font-size: 13px; transition: 0.3s; 
+        }
+        nav a:hover, nav a.active { color: var(--accent-1-light); text-shadow: var(--neon-glow); }
 
-        /* CARRITO ICON & PANEL */
-        .cart-icon-container { position: relative; cursor: pointer; margin-right: 25px; font-size: 20px; }
-        .cart-count { 
-            position: absolute; top: -8px; right: -10px; background: var(--accent-1-light); 
-            color: var(--bg-darkest); font-size: 10px; font-weight: bold; 
-            padding: 2px 6px; border-radius: 10px; font-family: 'JetBrains Mono';
+        /* --- TIENDA GRID --- */
+        .shop-grid { 
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; padding: 50px 8%; flex: 1;
         }
 
-        .cart-sidebar {
-            position: fixed; top: 0; right: -400px; width: 380px; height: 100%;
-            background: var(--bg-card); border-left: 1px solid var(--primary-light);
-            z-index: 2000; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            padding: 30px; box-sizing: border-box; display: flex; flex-direction: column;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+        .card {
+            background: var(--bg-card); border: 1px solid rgba(255,255,255,0.05);
+            padding: 20px; transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative; overflow: hidden;
+            clip-path: polygon(0 0, 100% 0, 100% 92%, 92% 100%, 0 100%);
         }
-        .cart-sidebar.active { right: 0; }
-        .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary-dark); padding-bottom: 15px; margin-bottom: 20px; }
-        .cart-items { flex: 1; overflow-y: auto; }
-        .cart-item { display: flex; justify-content: space-between; margin-bottom: 15px; background: rgba(0,0,0,0.2); padding: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .card:hover { 
+            transform: translateY(-5px); border-color: var(--accent-1-light);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .card-img { width: 100%; height: 200px; object-fit: cover; background: #000; margin-bottom: 15px; }
         
-        /* FORMULARIO DE ENVÍO DINÁMICO */
-        .shipping-form { background: rgba(0,0,0,0.3); padding: 15px; margin-top: 20px; border: 1px dashed var(--primary-light); display: none; }
-        .shipping-form h4 { font-family: 'JetBrains Mono'; color: var(--accent-1-light); margin: 0 0 10px 0; font-size: 12px; }
-        .shipping-form input {
-            width: 100%; background: var(--bg-darkest); border: 1px solid var(--primary-dark);
-            color: white; padding: 8px; margin-bottom: 8px; font-size: 12px; box-sizing: border-box; outline: none;
+        .badge { 
+            font-family: 'JetBrains Mono'; font-size: 9px; padding: 3px 8px; 
+            border: 1px solid var(--accent-1-light); color: var(--accent-1-light);
+            position: absolute; top: 30px; right: 30px; background: var(--bg-darkest);
         }
-        .shipping-form input:focus { border-color: var(--accent-1-light); }
 
-        .cart-total { border-top: 1px solid var(--primary-dark); padding-top: 20px; font-family: 'JetBrains Mono'; }
-        .checkout-btn {
-            background: var(--accent-1-light); color: var(--bg-darkest); border: none;
-            padding: 15px; font-family: 'JetBrains Mono'; font-weight: bold; width: 100%; cursor: pointer; margin-top: 15px; transition: 0.3s;
+        /* --- BOTONES --- */
+        .btn-action {
+            background: transparent; border: 1px solid var(--accent-1-light);
+            color: var(--accent-1-light); padding: 10px 20px; cursor: pointer;
+            font-family: 'JetBrains Mono'; font-weight: bold; width: 100%;
+            transition: 0.3s; position: relative; overflow: hidden;
         }
-        .checkout-btn:hover:not(:disabled) { box-shadow: 0 0 20px rgba(181, 222, 33, 0.4); transform: translateY(-2px); }
-        .checkout-btn:disabled { background: var(--text-muted); cursor: not-allowed; }
+        .btn-action:hover { background: var(--accent-1-light); color: var(--bg-darkest); box-shadow: var(--neon-glow); }
 
-        /* GRID DE PRODUCTOS */
-        .shop-container { padding: 60px 10%; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
-        .product-card { background: var(--bg-dark); border: 1px solid var(--primary-dark); padding: 25px; transition: 0.3s; position: relative; }
-        .product-card:hover { border-color: var(--primary-light); transform: translateY(-5px); }
-        .product-type { position: absolute; top: 10px; right: 10px; font-family: 'JetBrains Mono'; font-size: 10px; color: var(--accent-1-light); background: var(--bg-darkest); padding: 2px 8px; }
-        
-        .buy-btn {
-            background: transparent; border: 1px solid var(--accent-1-light); color: var(--accent-1-light);
-            padding: 10px 20px; font-family: 'JetBrains Mono'; cursor: pointer; transition: 0.3s;
+        /* --- CARRITO SIDEBAR --- */
+        .sidebar {
+            position: fixed; top: 0; right: -420px; width: 400px; height: 100%;
+            background: rgba(19, 9, 52, 0.98); border-left: 2px solid var(--accent-1-light);
+            z-index: 2000; transition: 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            padding: 40px 30px; box-sizing: border-box; display: flex; flex-direction: column;
         }
-        .buy-btn:hover { background: var(--accent-1-light); color: var(--bg-darkest); }
+        .sidebar.active { right: 0; box-shadow: -20px 0 50px rgba(0,0,0,0.8); }
 
-        /* FOOTER */
-        footer { background-color: var(--primary); padding: 30px 10%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--primary-dark); margin-top: auto; }
-        .social-logos { display: flex; gap: 20px; }
-        .icon-svg { width: 20px; height: 20px; fill: var(--text-muted); transition: 0.3s; }
-        .icon-svg:hover { fill: var(--accent-1-light); }
+        .form-group { margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; }
+        .form-group input {
+            width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--primary-light);
+            padding: 12px; color: white; margin-bottom: 10px; font-family: 'JetBrains Mono';
+            font-size: 12px; box-sizing: border-box; outline: none;
+        }
+        .form-group input:focus { border-color: var(--accent-1-light); box-shadow: var(--neon-glow); }
 
-        /* PANEL USUARIO */
-        .user-panel { display: none; position: absolute; top: 70px; right: 50px; background: var(--bg-card); padding: 20px; border: 1px solid var(--primary-light); z-index: 3000; min-width: 180px; }
-        .user-panel.active { display: block; }
+        /* --- ANIMACIÓN CARGANDO (MODAL) --- */
+        .transmission-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: var(--bg-darkest); z-index: 5000; display: none;
+            flex-direction: column; justify-content: center; align-items: center;
+            font-family: 'JetBrains Mono'; color: var(--accent-1-light);
+        }
+        .loader-bar { width: 200px; height: 2px; background: rgba(255,255,255,0.1); margin-top: 20px; position: relative; }
+        .loader-progress { position: absolute; height: 100%; background: var(--accent-1-light); width: 0%; animation: load 2s linear infinite; }
+        @keyframes load { 0% { width: 0; left: 0; } 50% { width: 100%; left: 0; } 100% { width: 0; left: 100%; } }
+
+        /* --- TOAST --- */
+        #toast {
+            position: fixed; bottom: 20px; left: 20px; background: var(--accent-1-light);
+            color: var(--bg-darkest); padding: 12px 25px; font-family: 'JetBrains Mono';
+            font-weight: bold; font-size: 12px; transform: translateX(-150%); transition: 0.5s; z-index: 10000;
+        }
+        #toast.show { transform: translateX(0); }
     </style>
 </head>
 <body>
 
+    <div id="loadingOverlay" class="transmission-overlay">
+        <div id="loadingText">CIFRANDO DATOS DE ORDEN...</div>
+        <div class="loader-bar"><div class="loader-progress"></div></div>
+        <div style="font-size: 10px; margin-top: 10px; opacity: 0.5;">NO CIERRE LA TERMINAL</div>
+    </div>
+
+    <div id="toast">>> MANIFIESTO ACTUALIZADO</div>
+
     <header>
         <a href="index.html" class="logo">Blue Moon HQ</a>
         <nav>
-            <a href="index.html">Sobre Nosotros</a>
-            <a href="noticias.html">Noticias</a>
-            <a href="tienda.html" class="active">Tienda</a>
-            <a href="mis-ordenes.html">Mis Órdenes</a>
-            <a href="contacto.html">Contacto</a>
+            <a href="index.html">INICIO</a>
+            <a href="tienda.html" class="active">SUMINISTROS</a>
+            <a href="mis-ordenes.html">MIS ÓRDENES</a>
+            <a href="comunidad.html">RED</a>
         </nav>
-        
-        <div style="display: flex; align-items: center;">
-            <div class="cart-icon-container" onclick="toggleCart()">
-                🛒 <span class="cart-count" id="cartCount">0</span>
+        <div style="display:flex; align-items:center;">
+            <div id="cartTrigger" onclick="toggleCart()" style="cursor:pointer; margin-right:20px; font-family:'JetBrains Mono';">
+                🛒 <span id="cartCount" style="color:var(--accent-1-light)">0</span>
             </div>
-            <div class="user-icon" onclick="document.getElementById('userPanel').classList.toggle('active')" style="cursor:pointer; font-size: 20px;">👤</div>
+            <div id="userBtn" onclick="document.getElementById('userPanel').classList.toggle('active')" style="cursor:pointer">👤</div>
         </div>
-
-        <div class="user-panel" id="userPanel">
-            <span id="displayUsername" style="color:var(--accent-1-light); font-family:'JetBrains Mono'; font-weight: bold;">Invitado</span>
-            <hr style="border:0; border-top:1px solid var(--primary-dark); margin:10px 0;">
-            <a href="mis-ordenes.html" style="color:white; text-decoration:none; font-size:12px; display:block; margin-bottom:10px;">📦 Ver mis pedidos</a>
-            <button id="logoutBtn" style="display:none; background:#ff4b4b; color:white; border:none; padding:8px; width:100%; cursor:pointer; font-family:'JetBrains Mono'; font-size:11px;">DESCONECTAR</button>
+        
+        <div id="userPanel" style="display:none; position:absolute; top:70px; right:5%; background:var(--bg-card); padding:20px; border:1px solid var(--accent-1-light); z-index:3000;">
+            <span id="userName" style="font-family:'JetBrains Mono'; color:var(--accent-1-light);">Invitado</span>
+            <button onclick="auth.signOut()" style="display:block; margin-top:15px; background:transparent; color:#ff4b4b; border:1px solid #ff4b4b; padding:5px; width:100%; cursor:pointer;">DESCONECTAR</button>
         </div>
     </header>
 
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h2 style="font-family:'JetBrains Mono'; font-size:18px; margin:0;">LOGÍSTICA HQ</h2>
-            <button onclick="toggleCart()" style="background:none; border:none; color:white; cursor:pointer; font-size: 20px;">✕</button>
-        </div>
-        
-        <div class="cart-items" id="cartItems">
-            </div>
-
-        <div id="shippingArea" class="shipping-form">
-            <h4 id="shippingTitle">DATOS DE TRANSMISIÓN</h4>
-            <input type="text" id="shipName" placeholder="Identificador del Agente">
-            <div id="physicalFields" style="display:none;">
-                <input type="text" id="shipAddress" placeholder="Dirección (Calle y Número)">
-                <input type="text" id="shipCity" placeholder="Ciudad / Estado">
-                <input type="text" id="shipZip" placeholder="Código Postal">
-            </div>
-            <input type="email" id="shipEmail" placeholder="Correo de contacto">
-        </div>
-
-        <div class="cart-total">
-            <div style="display:flex; justify-content:space-between; margin-bottom: 10px;">
-                <span>TOTAL:</span>
-                <span id="cartTotal" style="font-weight:bold; color:var(--accent-1-light);">0 ◈</span>
-            </div>
-            <button class="checkout-btn" id="btnConfirmar" onclick="processOrder()">CONFIRMAR ORDEN</button>
-        </div>
-    </div>
-
-    <main class="shop-container">
-        <article class="product-card">
-            <span class="product-type">FÍSICO</span>
-            <img src="https://via.placeholder.com/300x250/130934/4a21de?text=HOODIE+OMEGA" style="width:100%; margin-bottom:15px;">
-            <h3 style="margin:0 0 10px 0;">Hoodie Protocolo 4.0</h3>
-            <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">Equipamiento táctico de algodón pesado para operaciones en exteriores.</p>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-                <span style="color:var(--accent-1-light); font-weight:bold; font-family:'JetBrains Mono';">450 ◈</span>
-                <button class="buy-btn" onclick="addToCart('Hoodie Protocolo 4.0', 450, 'fisico')">AÑADIR</button>
+    <main class="shop-grid">
+        <article class="card">
+            <span class="badge">FÍSICO</span>
+            <img src="https://via.placeholder.com/400x300/130934/4a21de?text=HQ+HOODIE" class="card-img">
+            <h3 style="margin:0; font-family:'JetBrains Mono';">Hoodie Protocolo 4.0</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin: 10px 0 20px;">Indumentaria técnica para misiones de campo. Algodón pesado 400g.</p>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-family:'JetBrains Mono'; color:var(--accent-1-light); font-size:18px;">450 ◈</span>
+                <button class="btn-action" onclick="addToCart('Hoodie Protocolo 4.0', 450, 'fisico')">ADQUIRIR</button>
             </div>
         </article>
 
-        <article class="product-card">
-            <span class="product-type">DIGITAL</span>
-            <img src="https://via.placeholder.com/300x250/130934/b5de21?text=STICKER+PACK" style="width:100%; margin-bottom:15px;">
-            <h3 style="margin:0 0 10px 0;">Sticker Pack Digital</h3>
-            <p style="font-size:13px; color:var(--text-muted); line-height:1.5;">Diseños exclusivos de la Comandante para tu terminal personal.</p>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px;">
-                <span style="color:var(--accent-1-light); font-weight:bold; font-family:'JetBrains Mono';">50 ◈</span>
-                <button class="buy-btn" onclick="addToCart('Sticker Pack Digital', 50, 'digital')">AÑADIR</button>
+        <article class="card">
+            <span class="badge" style="border-color:#5865F2; color:#5865F2;">DIGITAL</span>
+            <img src="https://via.placeholder.com/400x300/130934/b5de21?text=DATA+PACK" class="card-img">
+            <h3 style="margin:0; font-family:'JetBrains Mono';">Sticker Pack Digital</h3>
+            <p style="font-size:12px; color:var(--text-muted); margin: 10px 0 20px;">Activos visuales para personalizar tu terminal de comunicación.</p>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-family:'JetBrains Mono'; color:var(--accent-1-light); font-size:18px;">50 ◈</span>
+                <button class="btn-action" onclick="addToCart('Sticker Pack Digital', 50, 'digital')">ADQUIRIR</button>
             </div>
         </article>
     </main>
 
-    <footer>
-        <span style="font-family: 'Dancing Script'; font-size: 22px; color: var(--accent-1-light);">Blue Moon Staff</span>
-        <div class="social-logos">
-            <a href="https://x.com/blue_moon_staff" target="_blank"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-            <a href="https://youtube.com/@bluemoonhq" target="_blank"><svg class="icon-svg" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+    <div id="sidebar" class="sidebar">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+            <h2 style="font-family:'JetBrains Mono'; font-size:16px; margin:0;">[ MANIFIESTO DE CARGA ]</h2>
+            <button onclick="toggleCart()" style="background:none; border:none; color:white; font-size:20px; cursor:pointer;">✕</button>
         </div>
-    </footer>
+
+        <div id="cartList" style="flex:1; overflow-y:auto;">
+            </div>
+
+        <div id="shipForm" class="form-group" style="display:none;">
+            <h4 style="font-family:'JetBrains Mono'; font-size:11px; color:var(--accent-1-light); margin-bottom:15px;">COORDENADAS DE ENTREGA</h4>
+            <input type="text" id="inName" placeholder="IDENTIFICADOR DEL AGENTE">
+            <div id="fieldsPhysical" style="display:none;">
+                <input type="text" id="inAddr" placeholder="CALLE Y NÚMERO">
+                <input type="text" id="inCity" placeholder="CIUDAD / ESTADO">
+                <input type="text" id="inZip" placeholder="CÓDIGO POSTAL">
+                <input type="text" id="inCountry" placeholder="PAÍS DE OPERACIÓN">
+            </div>
+            <input type="email" id="inEmail" placeholder="CORREO DE ENLACE">
+        </div>
+
+        <div style="margin-top:20px; border-top:1px solid var(--accent-1-light); padding-top:20px;">
+            <div style="display:flex; justify-content:space-between; font-family:'JetBrains Mono'; margin-bottom:20px;">
+                <span>TOTAL REQUERIDO:</span>
+                <span id="totalTxt" style="color:var(--accent-1-light)">0 ◈</span>
+            </div>
+            <button class="btn-action" id="confirmBtn" onclick="processOrder()" style="background:var(--accent-1-light); color:var(--bg-darkest);">ESTABLECER PEDIDO</button>
+        </div>
+    </div>
 
     <script>
-        let cart = JSON.parse(localStorage.getItem('hq_cart')) || [];
+        let cart = JSON.parse(localStorage.getItem('blue_moon_cart')) || [];
         let currentUser = null;
 
-        // --- SISTEMA DE USUARIO ---
-        auth.onAuthStateChanged((user) => {
-            if (user) {
+        // Firebase Auth
+        auth.onAuthStateChanged(user => {
+            if(user) {
                 currentUser = user;
                 db.collection("agentes").doc(user.uid).get().then(doc => {
                     if(doc.exists) {
-                        document.getElementById('displayUsername').innerText = doc.data().username;
-                        document.getElementById('shipName').value = doc.data().username;
-                        document.getElementById('shipEmail').value = user.email;
-                        document.getElementById('logoutBtn').style.display = "block";
+                        document.getElementById('userName').innerText = doc.data().username;
+                        document.getElementById('inName').value = doc.data().username;
                     }
                 });
+                document.getElementById('inEmail').value = user.email;
             }
         });
 
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            auth.signOut().then(() => { window.location.reload(); });
-        });
-
-        // --- LÓGICA DEL CARRITO ---
-        function toggleCart() {
-            document.getElementById('cartSidebar').classList.toggle('active');
-            updateCart();
-        }
+        function toggleCart() { document.getElementById('sidebar').classList.toggle('active'); updateUI(); }
 
         function addToCart(name, price, type) {
-            cart.push({ name, price, type });
-            updateCart();
-            // Feedback en el botón
-            const btn = event.target;
-            btn.innerText = "¡LISTO!";
-            setTimeout(() => btn.innerText = "AÑADIR", 800);
+            cart.push({name, price, type});
+            showToast(`ADQUIRIDO: ${name.toUpperCase()}`);
+            updateUI();
         }
 
-        function updateCart() {
-            localStorage.setItem('hq_cart', JSON.stringify(cart));
-            const cartItems = document.getElementById('cartItems');
-            const cartCount = document.getElementById('cartCount');
-            const cartTotal = document.getElementById('cartTotal');
-            const shippingArea = document.getElementById('shippingArea');
-            const physicalFields = document.getElementById('physicalFields');
-            
-            cartItems.innerHTML = '';
-            let total = 0;
-            let hasPhysical = false;
+        function showToast(txt) {
+            const t = document.getElementById('toast');
+            t.innerText = `>> ${txt}`;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
 
-            if (cart.length > 0) {
-                shippingArea.style.display = "block";
-                cart.forEach((item, index) => {
-                    total += item.price;
-                    if(item.type === 'fisico') hasPhysical = true;
-                    cartItems.innerHTML += `
-                        <div class="cart-item">
-                            <div>
-                                <span style="display:block; font-size:13px;">${item.name}</span>
-                                <span style="font-size:9px; color:var(--accent-1-light);">[${item.type.toUpperCase()}]</span>
-                            </div>
-                            <div style="text-align:right">
-                                <span style="font-size:13px;">${item.price} ◈</span>
-                                <button onclick="removeItem(${index})" style="background:none; border:none; color:#ff4b4b; cursor:pointer; display:block; margin-left:auto; font-size:10px;">BORRAR</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                physicalFields.style.display = hasPhysical ? "block" : "none";
-                document.getElementById('shippingTitle').innerText = hasPhysical ? "DATOS DE ENVÍO FÍSICO" : "DATOS DE ENTREGA DIGITAL";
-            } else {
-                cartItems.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:12px; margin-top:40px;">No hay suministros en la terminal.</p>';
-                shippingArea.style.display = "none";
-            }
+        function updateUI() {
+            localStorage.setItem('blue_moon_cart', JSON.stringify(cart));
+            const list = document.getElementById('cartList');
+            const totalTxt = document.getElementById('totalTxt');
+            const cartCount = document.getElementById('cartCount');
+            const shipForm = document.getElementById('shipForm');
+            const physFields = document.getElementById('fieldsPhysical');
+            
+            list.innerHTML = '';
+            let total = 0;
+            let hasPhys = false;
+
+            cart.forEach((item, i) => {
+                total += item.price;
+                if(item.type === 'fisico') hasPhys = true;
+                list.innerHTML += `
+                    <div style="display:flex; justify-content:space-between; background:rgba(0,0,0,0.2); padding:10px; margin-bottom:10px; font-size:12px; border-left:2px solid ${item.type === 'fisico' ? '#b5de21' : '#5865F2'}">
+                        <span>${item.name}</span>
+                        <span>${item.price} ◈ <button onclick="remove(${i})" style="color:red; background:none; border:none; cursor:pointer;">[X]</button></span>
+                    </div>
+                `;
+            });
 
             cartCount.innerText = cart.length;
-            cartTotal.innerText = `${total} ◈`;
+            totalTxt.innerText = `${total} ◈`;
+            shipForm.style.display = cart.length > 0 ? 'block' : 'none';
+            physFields.style.display = hasPhys ? 'block' : 'none';
         }
 
-        function removeItem(index) {
-            cart.splice(index, 1);
-            updateCart();
-        }
+        function remove(i) { cart.splice(i, 1); updateUI(); }
 
-        // --- PROCESAR ORDEN ---
         async function processOrder() {
-            if (!currentUser) return alert("Error: Identificación de Agente requerida para adquisiciones.");
-            if (cart.length === 0) return;
+            if(!currentUser) return alert("ERROR: IDENTIFICACIÓN NO DETECTADA.");
+            if(cart.length === 0) return;
 
-            const btn = document.getElementById('btnConfirmar');
-            const hasPhysical = cart.some(i => i.type === 'fisico');
+            // Validación de país si es físico
+            const needsPhys = cart.some(item => item.type === 'fisico');
+            if(needsPhys && !document.getElementById('inCountry').value) {
+                return alert("ERROR: PAÍS DE OPERACIÓN REQUERIDO.");
+            }
 
-            const orderData = {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.style.display = 'flex';
+
+            const order = {
                 agenteId: currentUser.uid,
-                agenteNombre: document.getElementById('shipName').value,
-                email: document.getElementById('shipEmail').value,
-                productos: cart,
-                total: cart.reduce((acc, item) => acc + item.price, 0),
+                agente: document.getElementById('inName').value,
+                items: cart,
+                total: cart.reduce((a, b) => a + b.price, 0),
+                email: document.getElementById('inEmail').value,
                 fecha: firebase.firestore.FieldValue.serverTimestamp(),
                 estado: "Pendiente"
             };
 
-            if (hasPhysical) {
-                orderData.logistica = {
-                    direccion: document.getElementById('shipAddress').value,
-                    ciudad: document.getElementById('shipCity').value,
-                    zip: document.getElementById('shipZip').value
+            if(needsPhys) {
+                order.envio = {
+                    dir: document.getElementById('inAddr').value,
+                    ciudad: document.getElementById('inCity').value,
+                    cp: document.getElementById('inZip').value,
+                    pais: document.getElementById('inCountry').value
                 };
-                if (!orderData.logistica.direccion) return alert("Se requiere dirección de entrega para productos físicos.");
             }
 
-            btn.disabled = true;
-            btn.innerText = "TRANSMITIENDO...";
-
             try {
-                await db.collection("ordenes_cuartel").add(orderData);
-                alert(">> TRANSMISIÓN EXITOSA. La orden ha sido registrada en el Cuartel.");
-                cart = [];
-                updateCart();
-                toggleCart();
-            } catch (error) {
-                alert("Error en el enlace: " + error.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = "CONFIRMAR ORDEN";
+                await db.collection("ordenes_cuartel").add(order);
+                document.getElementById('loadingText').innerText = "TRANSMISIÓN COMPLETADA EXITOSAMENTE.";
+                setTimeout(() => {
+                    overlay.style.display = 'none';
+                    cart = [];
+                    updateUI();
+                    toggleCart();
+                    alert("Orden recibida por Silas. Revisa 'Mis Órdenes' para el seguimiento.");
+                }, 2000);
+            } catch(e) {
+                alert("ERROR EN LA TRANSMISIÓN: " + e.message);
+                overlay.style.display = 'none';
             }
         }
 
-        updateCart(); // Carga inicial
+        updateUI();
     </script>
 </body>
 </html>
