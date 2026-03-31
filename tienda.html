@@ -228,11 +228,13 @@
             updateUI();
         }
 
-        function showToast(txt) {
-            const t = document.getElementById('toast');
-            t.innerText = `>> ${txt}`;
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+        // Actualiza la función showToast en tienda.html
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+    // Añadimos un enlace pequeño dentro del mensaje
+            toast.innerHTML = `>> ${message} | <a href="mis-ordenes.html" style="color:white; text-decoration:underline;">VER REGISTRO</a>`;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 5000);
         }
 
         function updateUI() {
