@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blue Moon HQ - Mis Órdenes</title>
+    <title>Blue Moon HQ - Registro de Adquisiciones</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Dancing+Script:wght@700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
@@ -14,123 +14,156 @@
     <style>
         :root {
             --bg-darkest: #0d0721; --bg-dark: #130934; --bg-card: #180b47;
-            --primary-dark: #25116f; --primary-light: #4a21de;
-            --accent-1-light: #b5de21; --text-muted: #96949e; --text-primary: #e5e4e7;
-            --status-pending: #ffcc00; --status-shipped: #00ccff; --status-delivered: #b5de21;
+            --primary-light: #4a21de; --accent-1-light: #b5de21;
+            --text-muted: #96949e; --text-primary: #e5e4e7;
+            --neon-blue: #00ccff; --neon-gold: #ffcc00;
         }
 
-        body { background-color: var(--bg-darkest); color: var(--text-primary); font-family: 'Inter', sans-serif; margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+        body { 
+            background-color: var(--bg-darkest); color: var(--text-primary); 
+            font-family: 'Inter', sans-serif; margin: 0; min-height: 100vh;
+        }
 
-        header { background-color: rgba(13, 7, 33, 0.95); padding: 20px 50px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--primary-dark); }
-        .logo { font-family: 'Dancing Script', cursive; font-size: 24px; color: var(--text-primary); text-decoration: none; }
+        /* Scanline sutil */
+        body::before {
+            content: " "; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.05) 50%);
+            background-size: 100% 4px; z-index: 9999; pointer-events: none;
+        }
+
+        header {
+            background: rgba(13, 7, 33, 0.9); backdrop-filter: blur(10px);
+            padding: 15px 5%; display: flex; justify-content: space-between; 
+            align-items: center; border-bottom: 1px solid var(--primary-light);
+        }
+        .logo { font-family: 'Dancing Script', cursive; font-size: 24px; text-decoration: none; color: white; }
+
+        .main-content { padding: 60px 8%; max-width: 1000px; margin: 0 auto; }
         
-        .container { flex: 1; padding: 60px 10%; }
-        h1 { font-family: 'JetBrains Mono'; font-size: 2rem; border-left: 4px solid var(--accent-1-light); padding-left: 15px; margin-bottom: 40px; }
+        h1 { 
+            font-family: 'JetBrains Mono'; font-size: 1.5rem; 
+            letter-spacing: 2px; border-left: 4px solid var(--accent-1-light); 
+            padding-left: 15px; margin-bottom: 40px; text-transform: uppercase;
+        }
 
+        /* TARJETA DE ORDEN TÁCTICA */
         .order-card {
-            background: var(--bg-card); border: 1px solid var(--primary-dark);
-            padding: 25px; margin-bottom: 20px; position: relative;
+            background: var(--bg-card); border: 1px solid rgba(181, 222, 33, 0.1);
+            margin-bottom: 25px; padding: 25px; position: relative;
+            clip-path: polygon(0 0, 98% 0, 100% 15%, 100% 100%, 2% 100%, 0 85%);
             transition: 0.3s;
         }
-        .order-card:hover { border-color: var(--primary-light); }
+        .order-card:hover { border-color: var(--accent-1-light); transform: scale(1.01); }
 
-        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; }
-        .order-id { font-family: 'JetBrains Mono'; font-size: 12px; color: var(--text-muted); }
-        .order-status { 
-            font-family: 'JetBrains Mono'; font-size: 11px; font-weight: bold; 
-            padding: 4px 10px; border-radius: 2px; text-transform: uppercase;
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+        .order-id { font-family: 'JetBrains Mono'; font-size: 11px; color: var(--accent-1-light); opacity: 0.8; }
+        
+        /* ESTADOS NEÓN */
+        .status-pill {
+            font-family: 'JetBrains Mono'; font-size: 10px; font-weight: bold;
+            padding: 4px 12px; border-radius: 2px; text-transform: uppercase;
+            border: 1px solid;
+        }
+        .status-pendiente { color: var(--neon-gold); border-color: var(--neon-gold); background: rgba(255,204,0,0.1); }
+        .status-enviado { color: var(--neon-blue); border-color: var(--neon-blue); background: rgba(0,204,255,0.1); }
+        .status-entregado { color: var(--accent-1-light); border-color: var(--accent-1-light); background: rgba(181,222,33,0.1); }
+
+        .items-list { list-style: none; padding: 0; margin: 15px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
+        .item-row { font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: flex; justify-content: space-between; }
+        
+        .shipping-info { 
+            font-size: 11px; background: rgba(0,0,0,0.2); padding: 10px; 
+            margin-top: 15px; font-family: 'JetBrains Mono'; color: var(--text-muted);
         }
 
-        /* Colores dinámicos de estado */
-        .status-pendiente { background: rgba(255, 204, 0, 0.1); color: var(--status-pending); border: 1px solid var(--status-pending); }
-        .status-enviado { background: rgba(0, 204, 255, 0.1); color: var(--status-shipped); border: 1px solid var(--status-shipped); }
-        .status-entregado { background: rgba(181, 222, 33, 0.1); color: var(--status-delivered); border: 1px solid var(--status-delivered); }
+        .total-row { 
+            margin-top: 15px; font-family: 'JetBrains Mono'; 
+            font-weight: bold; color: var(--accent-1-light); text-align: right;
+            font-size: 16px;
+        }
 
-        .product-list { font-size: 14px; list-style: none; padding: 0; }
-        .product-item { margin-bottom: 5px; color: var(--text-muted); }
-        .order-total { margin-top: 15px; font-weight: bold; color: var(--accent-1-light); font-family: 'JetBrains Mono'; }
-
-        .no-orders { text-align: center; padding: 100px 0; color: var(--text-muted); font-family: 'JetBrains Mono'; }
-        
-        footer { padding: 30px 10%; border-top: 1px solid var(--primary-dark); display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); }
+        .empty-state { text-align: center; padding: 100px 0; font-family: 'JetBrains Mono'; opacity: 0.5; }
     </style>
 </head>
 <body>
 
     <header>
         <a href="index.html" class="logo">Blue Moon HQ</a>
-        <nav>
-            <a href="tienda.html" style="color:var(--text-primary); text-decoration:none; font-family:'JetBrains Mono'; font-size:14px;">← Volver a Suministros</a>
+        <nav style="font-family: 'JetBrains Mono'; font-size: 12px;">
+            <a href="tienda.html" style="color:var(--text-primary); text-decoration:none;">← REGRESAR A SUMINISTROS</a>
         </nav>
     </header>
 
-    <main class="container">
-        <h1>Registro de Adquisiciones</h1>
-        <div id="ordersContainer">
-            <p style="font-family:'JetBrains Mono'; color:var(--accent-1-light);">Sincronizando con la base de datos del Cuartel...</p>
+    <main class="main-content">
+        <h1>Manifiesto de Órdenes</h1>
+        <div id="ordersWrapper">
+            <div class="empty-state">Sincronizando con el servidor central...</div>
         </div>
     </main>
 
-    <footer>
-        <span>© 2026 Blue Moon Logistics</span>
-        <span>Agente: <span id="agentName">Identificando...</span></span>
-    </footer>
-
     <script>
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(user => {
             if (user) {
-                loadOrders(user.uid);
-                loadAgentName(user.uid);
+                fetchOrders(user.uid);
             } else {
-                window.location.href = "index.html"; // Redirigir si no está logueado
+                window.location.href = "index.html"; // Protección de ruta
             }
         });
 
-        function loadAgentName(uid) {
-            db.collection("agentes").doc(uid).get().then(doc => {
-                if(doc.exists) document.getElementById('agentName').innerText = doc.data().username;
-            });
-        }
-
-        function loadOrders(uid) {
-            const container = document.getElementById('ordersContainer');
+        function fetchOrders(uid) {
+            const container = document.getElementById('ordersWrapper');
             
             db.collection("ordenes_cuartel")
-              .where("agenteId", "==", uid)
-              .orderBy("fecha", "desc")
-              .onSnapshot((snapshot) => {
-                  if (snapshot.empty) {
-                      container.innerHTML = '<div class="no-orders">> NO SE HAN DETECTADO ÓRDENES REGISTRADAS A TU NOMBRE.</div>';
-                      return;
-                  }
+                .where("agenteId", "==", uid)
+                .orderBy("fecha", "desc")
+                .onSnapshot(snapshot => {
+                    if (snapshot.empty) {
+                        container.innerHTML = '<div class="empty-state">> NO SE DETECTARON ACTIVOS EN TRÁNSITO.</div>';
+                        return;
+                    }
 
-                  container.innerHTML = '';
-                  snapshot.forEach((doc) => {
-                      const order = doc.data();
-                      const statusClass = `status-${order.estado.toLowerCase().replace(/\s+/g, '-')}`;
-                      const date = order.fecha ? order.fecha.toDate().toLocaleDateString() : 'Procesando...';
-                      
-                      const productsHtml = order.productos.map(p => 
-                          `<li class="product-item">• ${p.name} <span style="font-size:10px">[${p.type}]</span></li>`
-                      ).join('');
+                    container.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const order = doc.data();
+                        const date = order.fecha ? order.fecha.toDate().toLocaleDateString() : "PROCESANDO";
+                        const statusClass = `status-${order.estado.toLowerCase().replace(/\s+/g, '-')}`;
+                        
+                        // Generar lista de productos
+                        const itemsHtml = order.items.map(i => `
+                            <div class="item-row">
+                                <span>• ${i.name} [${i.type.toUpperCase()}]</span>
+                                <span>${i.price} ◈</span>
+                            </div>
+                        `).join('');
 
-                      container.innerHTML += `
-                          <div class="order-card">
-                              <div class="order-header">
-                                  <div>
-                                      <div class="order-id">ID_ORDEN: ${doc.id.substring(0,8).toUpperCase()}</div>
-                                      <div style="font-size:12px; margin-top:5px;">Fecha: ${date}</div>
-                                  </div>
-                                  <span class="order-status ${statusClass}">${order.estado}</span>
-                              </div>
-                              <ul class="product-list">
-                                  ${productsHtml}
-                              </ul>
-                              <div class="order-total">TOTAL: ${order.total} ◈</div>
-                          </div>
-                      `;
-                  });
-              });
+                        // Info de envío (si existe)
+                        let shippingHtml = '';
+                        if (order.envio) {
+                            shippingHtml = `
+                                <div class="shipping-info">
+                                    COORDENADAS DE ENTREGA:<br>
+                                    ${order.envio.dir}, ${order.envio.ciudad}<br>
+                                    ${order.envio.pais} CP:${order.envio.cp}
+                                </div>
+                            `;
+                        }
+
+                        container.innerHTML += `
+                            <article class="order-card">
+                                <div class="order-header">
+                                    <div>
+                                        <div class="order-id">ORDEN_REF: ${doc.id.substring(0,8).toUpperCase()}</div>
+                                        <div style="font-size:12px; opacity:0.6; margin-top:4px;">FECHA_REG: ${date}</div>
+                                    </div>
+                                    <span class="status-pill ${statusClass}">${order.estado}</span>
+                                </div>
+                                <div class="items-list">${itemsHtml}</div>
+                                ${shippingHtml}
+                                <div class="total-row">CARGO TOTAL: ${order.total} ◈</div>
+                            </article>
+                        `;
+                    });
+                });
         }
     </script>
 </body>
