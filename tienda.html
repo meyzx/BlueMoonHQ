@@ -273,7 +273,7 @@
             // Validación de país si es físico
             const needsPhys = cart.some(item => item.type === 'fisico');
             if(needsPhys && !document.getElementById('inCountry').value) {
-                return alert("ERROR: PAÍS DE OPERACIÓN REQUERIDO.");
+                return alert("ERROR: REGIÓN DE OPERACIÓN REQUERIDO.");
             }
 
             const overlay = document.getElementById('loadingOverlay');
@@ -306,7 +306,7 @@
                     cart = [];
                     updateUI();
                     toggleCart();
-                    alert("Orden recibida por Silas. Revisa 'Mis Órdenes' para el seguimiento.");
+                        alert("Orden recibida por Flex. Revisa 'Mis Órdenes' para el seguimiento.");
                 }, 2000);
             } catch(e) {
                 alert("ERROR EN LA TRANSMISIÓN: " + e.message);
