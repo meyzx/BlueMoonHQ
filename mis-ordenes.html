@@ -107,12 +107,18 @@
     <script>
         auth.onAuthStateChanged(user => {
             if (user) {
-                currentUser = user; // Guardamos el usuario
+        // El usuario está autenticado, cargamos sus datos
+                currentUser = user;
                 fetchOrders(user.uid);
             } else {
-        // Si no hay usuario, lo enviamos a la terminal de acceso
-                console.log("Acceso denegado: Identificación requerida");
-                window.location.href = "index.html"; 
+        // Agregamos un pequeño retraso o validamos que realmente no haya sesión
+        // Antes de redirigir, verificamos si Firebase ya terminó de inicializar
+                setTimeout(() => {
+                    if (!auth.currentUser) {
+                        console.warn("Acceso denegado: No se detectó sesión activa.");
+                        window.location.href = "index.html";
+                    }
+                }, 1500); // Le damos 1.5 segundos para conectar
             }
         });
 
