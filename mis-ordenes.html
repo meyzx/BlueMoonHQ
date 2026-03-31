@@ -89,8 +89,11 @@
 
     <header>
         <a href="index.html" class="logo">Blue Moon HQ</a>
-        <nav style="font-family: 'JetBrains Mono'; font-size: 12px;">
-            <a href="tienda.html" style="color:var(--text-primary); text-decoration:none;">← REGRESAR A SUMINISTROS</a>
+        <nav>
+            <a href="index.html">INICIO</a>
+            <a href="tienda.html">SUMINISTROS</a>
+            <a href="mis-ordenes.html" class="active">MIS ÓRDENES</a>
+            <a href="comunidad.html">RED</a>
         </nav>
     </header>
 
@@ -104,9 +107,12 @@
     <script>
         auth.onAuthStateChanged(user => {
             if (user) {
+                currentUser = user; // Guardamos el usuario
                 fetchOrders(user.uid);
             } else {
-                window.location.href = "index.html"; // Protección de ruta
+        // Si no hay usuario, lo enviamos a la terminal de acceso
+                console.log("Acceso denegado: Identificación requerida");
+                window.location.href = "index.html"; 
             }
         });
 
